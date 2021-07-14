@@ -6,9 +6,42 @@
   <title>JS Bin</title>
 </head>
 <body>
+
+	<script>
+    	function sumAll(){
+    		var times = document.querySelectorAll('.pl-video .pl-video-time .timestamp span');
+    	    var duration = 0;
+    	    for(var i=0; i<times.length; i++){
+    	       var t = times[i];
+    	       t = t.innerText;
+    	       t = t.split(':')
+    	       min = t[0];
+    	       sec = t[1];
+    	       duration = duration + parseInt(sec) + parseInt(min)*60
+    	    }
+    	    console.log(duration/60/60);
+    	    return duration/60/60;
+    	}
+    	
+    	function timeOne(){
+    		var times = document.querySelectorAll('.pl-video .pl-video-time .timestamp span');
+    	    var duration = 0;
+    	    for(var i=0; i<times.length; i++){
+    	       var t = times[i];
+    	       t = t.innerText;
+    	       t = t.split(':')
+    	       min = t[0];
+    	       sec = t[1];
+    	       duration = duration + parseInt(sec) + parseInt(min)*60
+    	       console.log(duration/60);
+    	       return duration/60;
+    	    }
+    	}
+    </script>
+       
     <table id="pl-video-table" class="pl-video-table">
-      <tbody id="pl-load-more-destination"><p1>HHHHHHHHHHEEEEEEELOOOOOOOOOOOO</p1>
-            
+      <tbody id="pl-load-more-destination"><button onclick ="alert('total: ' + sumAll() + ' h')">플레이리스트의 총 길이</button><br>
+      <button onclick ="alert('total: ' + timeOne() + ' min')">플레이리스트의 하나 길이</button>
 
 
 <tr class="pl-video yt-uix-tile yt-uix-dragdrop-draggable-item" data-set-video-id="56B44F6D10557CC6" data-video-id="YuC__aN-v04" data-title="Python &amp; Ruby - 오리엔테이션"><td class="pl-video-handle yt-uix-dragdrop-drag-handle"><span class="pl-video-handle-img yt-sprite"></span></td><td class="pl-video-index"></td><td class="pl-video-thumbnail"><span class="pl-video-thumb ux-thumb-wrap contains-addto"><a href="/watch?v=YuC__aN-v04&amp;index=1&amp;list=PLuHgQVnccGMA0lO0qip6Phh6UL73TS0es" class="yt-uix-sessionlink watched" aria-hidden="true" data-sessionlink="feature=plpp_video&amp;ei=-hy3VeX0F4jy4QL4pZSQCw&amp;ved=CAcQxjQ">  <span class="video-thumb  yt-thumb yt-thumb-72">
@@ -31,9 +64,9 @@
       Python &amp; Ruby - 오리엔테이션
     </a>
       <div class="pl-video-owner">
-게시자: <a href="/user/egoing2" class="yt-uix-sessionlink g-hovercard      spf-link " data-sessionlink="feature=playlist&amp;ei=-hy3VeX0F4jy4QL4pZSQCw&amp;ved=CAcQxjQ" data-ytid="UCvc8kv-i5fvFTJBFAk6n1SA" data-name="playlist">생활코딩</a>
+게시자: <a href="/user/egoing2" class="yt-uix-sessionlink g-hovercard spf-link " data-sessionlink="feature=playlist&amp;ei=-hy3VeX0F4jy4QL4pZSQCw&amp;ved=CAcQxjQ" data-ytid="UCvc8kv-i5fvFTJBFAk6n1SA" data-name="playlist">생활코딩</a>
       </div>
-  </td>
+  </td> 
 <td class="pl-video-badges"></td><td class="pl-video-added-by"></td><td class="pl-video-time"><div class="more-menu-wrapper">  <div class="timestamp"><span title="9분, 14초">9:14</span></div>
 <div class="pl-video-edit-options"><button class="yt-uix-button yt-uix-button-size-default yt-uix-button-default pl-video-edit-more flip" type="button" onclick=";return false;" data-can-set-playlist-thumbnail="True" data-can-move-to-bottom="True" data-button-menu-root-container="pl-video-table" data-button-menu-id="pl-video-edit-more-menu" data-can-edit-notes="True" data-can-move-to-top="True"><span class="yt-uix-button-content">더보기</span><span class="yt-uix-button-arrow yt-sprite"></span></button><button class="yt-uix-button yt-uix-button-size-default yt-uix-button-default yt-uix-button-empty yt-uix-button-has-icon no-icon-markup pl-video-edit-remove yt-uix-tooltip" type="button" onclick=";return false;" title="삭제"></button></div></div></td></tr>
     
@@ -2728,20 +2761,5 @@
       </tbody>
     </table>
     
-    <script>
-    	function sumAll(){
-    		var times = document.querySelectorAll('.pl-video .pl-video-time .timestamp span');
-    	    var duration = 0;
-    	    for(var i=0; i<times.length; i++){
-    	       var t = times[i];
-    	       t = t.innerText;
-    	       t = t.split(':')
-    	       min = t[0];
-    	       sec = t[1];
-    	       duration = duration + parseInt(sec) + parseInt(min)*60
-    	    }
-    	    console.log(duration/60/60);
-    	}
-    </script>
 </body>
 </html>

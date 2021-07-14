@@ -47,7 +47,21 @@ public class HomeController {
 		
 		model.addAttribute("serverTime", formattedDate );
 		
-		return "video";
+		return "video1";
+	}
+	
+	@RequestMapping(value = "/video2", method = RequestMethod.GET)
+	public String video2(Locale locale, Model model) {
+		logger.info("Welcome home! The client locale is {}.", locale);
+		
+		Date date = new Date();
+		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
+		
+		String formattedDate = dateFormat.format(date);
+		
+		model.addAttribute("serverTime", formattedDate );
+		
+		return "video2";
 	}
 	
 }
