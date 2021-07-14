@@ -69,7 +69,7 @@ public class YouTubeService {
 	        }).setApplicationName("youtube-video-duration-get").build();
 
 	        YouTube.Videos.List videos = youtube.videos().list("id,snippet,contentDetails");
-	        videos.setKey("발급받은 key 입력하기 ");     
+	        videos.setKey("발급받은 key 입력하기. ");     
 	        videos.setId("vEd3Gsmg7Oo");
 	        videos.setMaxResults(NUMBER_OF_VIDEOS_RETURNED); //조회 최대 갯수.
 	        List<Video> videoList = videos.execute().getItems();
