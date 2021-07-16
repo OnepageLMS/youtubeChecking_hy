@@ -1,0 +1,14 @@
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="Youtube">
+    <select id="insertYouTube" parameterType="YouTubeVO" resultType="int">
+        SELECT * FROM emp99 
+        INSERT INTO videoCheck (
+    </select>
+    
+    <insert id="Insert" parameterType="EmpVO">
+        INSERT INTO emp99 (name, salary, designation) VALUES (#{name}, #{salary}, #{designation})
+    </insert>
+</mapper>

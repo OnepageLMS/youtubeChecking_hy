@@ -18,7 +18,8 @@
  
     <script type="text/javascript">
         /**
-         * Youtube API 로드
+         * Youtube API 로드 
+         This code loads the IFrame Player API code asynchronously.
          */
         var tag = document.createElement('script');
         tag.src = "https://www.youtube.com/iframe_api";
@@ -29,6 +30,7 @@
          * onYouTubeIframeAPIReady 함수는 필수로 구현해야 한다.
          * 플레이어 API에 대한 JavaScript 다운로드 완료 시 API가 이 함수 호출한다.
          * 페이지 로드 시 표시할 플레이어 개체를 만들어야 한다.
+         This function creates an <iFrame> after the API code downloads.
          */
         var player;
         function onYouTubeIframeAPIReady() {
@@ -53,9 +55,10 @@
             console.log('onPlayerReady 실행');
             // 플레이어 자동실행 (주의: 모바일에서는 자동실행되지 않음)
 //            event.target.playVideo();
-            console.log("current time : " + tmp_obj.getCurrentTime());
+            //console.log("current time : " + tmp_obj.getCurrentTime());
             console.log("duration : " + tmp_obj.getDuration());
         }
+        
         var playerState;
         function onPlayerStateChange(event) {
             playerState = event.data == YT.PlayerState.ENDED ? '종료됨' :
@@ -78,6 +81,7 @@
         
         function playYoutube() {
             // 플레이어 자동실행 (주의: 모바일에서는 자동실행되지 않음)
+            player.seekTo(20, true); // 20초부터 영상 시작하도록 //나중에는 마지막 시청시간부터하도록!!
             tPlay = performance.now();
             console.log("playVideo!");
             player.playVideo();
@@ -85,6 +89,7 @@
         
         function stopYoutube() {
         	//console.log("duration : " + duration);
+        	console.log("current time : " + tmp_obj.getCurrentTime());
         	var result = "Absence";
         	tStop = performance.now();
         	watchingTime = parseInt(watchingTime) + (parseInt(tStop) - parseInt(tPlay));
@@ -92,7 +97,7 @@
         	//if(tmp_obj.getDuration() < watchingTime) 
         		console.log("duration : " + tmp_obj.getDuration());
         		
-            if(tmp_obj.getDuration() <= watchingTime/1000) {
+            if(tmp_obj.getDuration() <= tmp_obj.getCurrentTime()) {
             	
             	console.log("if duration : " + tmp_obj.getDuration());
                 console.log("if watchingTime : " + watchingTime/1000);
