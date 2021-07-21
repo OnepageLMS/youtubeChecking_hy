@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Video">
+	<insert id="insertTime">
+		insert into videocheck (studentID ,lastTime, timer)
+		values
+		(#{studentID}, #{lastTime}, #{timer})
+		
+	</insert>
+	
+	<update id="updateTime">
+		update videocheck
+		set lastTime=#{lastTime}, timer=#{timer}
+		where studentID=#{studentID}
+	</update>
+	
+	<delete id="deleteTime">
+		delete from videocheck where id=#{id}
+	</delete>
+	
+	<select id="getTime" resultType="VideoVO">
+		select * from videocheck where
+		studentID=#{studentID}
+	</select>
+	
+	<select id="getTimeList" resultType="VideoVO">
+		select * from videocheck order
+		by studentID desc
+	</select>
+	
+</mapper>
