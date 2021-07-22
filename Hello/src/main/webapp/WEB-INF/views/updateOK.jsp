@@ -27,10 +27,10 @@
 		</div>
  	</form>
  	
- 	
-	 	<div>
+ 	<!--<div>
 	 		<h1>Hello world!<a href = "list/3">Click Here</a></h1>
-	 	</div>
+	 	</div>  -->
+	 	
 	 	
 	 	<tbody>
             <c:forEach items="${list}" var="user">
@@ -83,8 +83,8 @@
             console.log('onPlayerReady 실행');
             console.log(startTime.innerText);
             // 플레이어 자동실행 (주의: 모바일에서는 자동실행되지 않음)
-//            event.target.playVideo();
-            //console.log("current time : " + tmp_obj.getCurrentTime());
+			// event.target.playVideo();
+            // console.log("current time : " + tmp_obj.getCurrentTime());
             console.log("duration : " + player.getDuration());
             //player.pauseVideo();
             player.seekTo(startTime.innerText, true);
