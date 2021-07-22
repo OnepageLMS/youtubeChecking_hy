@@ -22,7 +22,7 @@
 			
 			</div>
 			<div><input type="submit" id="test1" name ="lastTime" value ="0.0" onclick="stopYoutube()" ></div><br />
-			<div><input id="test3" name ="studentID"  ></div><br />
+			<div><input  type = "hidden" id="test3" name ="studentID" value = "${list.studentID}"></div><br />
 			<div><input type = "hidden" id="test2" name ="timer" value ="0.0" ></div><br />
 		</div>
  	</form>
@@ -30,20 +30,14 @@
  	<!--<div>
 	 		<h1>Hello world!<a href = "list/3">Click Here</a></h1>
 	 	</div>  -->
-	 	
-	 	
-	 	<tbody>
-            <c:forEach items="${list}" var="user">
-                <tr>
-                    <div type = "hidden" id="startTime">${user.lastTime}</div>
-               		<div type = "hidden" id="addTimer">${user.timer}</div>
-                </tr>
-            </c:forEach>
-        </tbody>
- 	
+        
+    
+      	<div type = "hidden" id="startTime">${list.lastTime}</div>
+        <div type = "hidden" id="addTimer">${list.timer}</div>
 	
 	
     <script type="text/javascript">
+    	alert(${list.lastTime});
         /**
          * Youtube API 로드 
          This code loads the IFrame Player API code asynchronously.
@@ -84,7 +78,7 @@
             console.log(startTime.innerText);
             // 플레이어 자동실행 (주의: 모바일에서는 자동실행되지 않음)
 			// event.target.playVideo();
-            // console.log("current time : " + tmp_obj.getCurrentTime());
+            //console.log("current time : " + tmp_obj.getCurrentTime());
             console.log("duration : " + player.getDuration());
             //player.pauseVideo();
             player.seekTo(startTime.innerText, true);
@@ -131,9 +125,12 @@
     		        	ts = "0" + sec;
     		        }
     				//console.log(time);
-    				console.log(th * 3600 + tm * 60 + ts + parseInt(addTimer.innerText)/10);
+    				//console.log(" : " + parseInt(addTimer.innerText)/10);
+    				//console.log(" time : " +  th * 3600 + tm * 60 + ts + parseInt(addTimer.innerText)/10);
     		        document.getElementById("time").innerHTML = th + ":" + tm + ":" + ts;
-    		        document.getElementById("test2").value = th * 3600 + tm * 60 + ts + parseInt(addTimer.innerText);
+    		        //document.getElementById("test2").value = time ;
+    		        document.getElementById("test2").value = time + parseInt(addTimer.innerText);
+    		        //document.getElementById("test2").value = th * 3600 + tm * 60 + ts + parseInt(addTimer.innerText);
     		      }, 1000);
         	}
         	

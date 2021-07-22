@@ -4,21 +4,21 @@ package com.mycompany.myapp.videocheck;
 
 public class VideoVO {
 	private int id;
-	private int studentID;
+	private String studentID;
 	private double lastTime;
 	private double timer;
 	
-	public int getSID() {
+	public int getID() {
 		return id;
 	}
 	public void setID(int id) {
 		this.id = id;
 	}
 	
-	public int getStudentID() {
+	public String getStudentID() {
 		return studentID;
 	}
-	public void setstudentID(int studentID) {
+	public void setStudentID(String studentID) {
 		this.studentID = studentID;
 	}
 	

@@ -21,12 +21,12 @@
 	
 	<select id="getTime" resultType="VideoVO">
 		select * from videocheck where
-		studentID=#{studentID}
+		id=#{id}
 	</select>
 	
 	<select id="getTimeList" resultType="VideoVO">
 		select * from videocheck order
-		by studentID desc
+		by id asc
 	</select>
 	
 </mapper>
