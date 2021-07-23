@@ -10,7 +10,7 @@
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 	
 </head>
-<body >
+<body>
 
     <div id="gangnamStyleIframe"></div>
  	
@@ -97,30 +97,50 @@
 		  
         function onPlayerStateChange(event) {
         	
-        	if(event.data == 1) {
-        		//alert(player.getCurrentTime());
+        	if(event.data == -1) {
         		
-        		//player.seekTo(20, true);  //특정시간부터 실행하도록 하기
-        		//player.playVideo();
-        		
-        		if(flag == 0){
+				if(flag == 0){
+        			
         			if (confirm("이어서 시청하시겠습니까?") == true){    //확인
-
-            		    //return;
+        				
+        				player.seekTo(startTime.innerText, true);
         				flag = 1;
-
+        				player.playVideo();
             		}
             		
             		else{   //취소
             			
-            			//player.stopVideo();
+            			player.seekTo(0, true);
+            			flag = 1;
+            			player.playVideo();
+            			return;
+
+            		}
+
+        		}
+        	}
+        	
+        	if(event.data == 1) {
+        		//이 confirm창이 뜰때는 youtube가 실행되고 있으면 안되는데,,
+    			//근데 event.data == 1이라는 것 자체가 실행이 되고 있다는 것이여서,, 
+    			//그럼 여기에다가 함수를 만들면 안되는가,,
+        		
+        		/*if(flag == 0){
+        			
+        			if (confirm("이어서 시청하시겠습니까?") == true){    //확인
+        				
+        				flag = 1;
+            		}
+            		
+            		else{   //취소
+            			
             			player.seekTo(0, true);
             			flag = 1;
             			return;
 
             		}
 
-        		}
+        		}*/
         		
         		
         		timer = setInterval(function(){
@@ -185,6 +205,10 @@
                 console.log('statistics');
             }
         }
+        
+        
+        
+
         
     </script>
 </body>
