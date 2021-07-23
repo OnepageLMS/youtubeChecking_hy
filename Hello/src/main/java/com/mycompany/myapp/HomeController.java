@@ -88,7 +88,7 @@ public class HomeController {
 		//model.addAttribute("list", videoVO);
 		
 		//model.addAttribute("list", videoService.getTimeList()); 
-		//System.out.println("test : " + videoService.getTime(103).getID() + "  " + videoService.getTime(103).getStudentID() + "  " + videoService.getTime(103).getLastTime());
+		System.out.println("test : " + videoService.getTime(103).getID() + "  ");
 		model.addAttribute("list", videoService.getTime(103)); //여기에 내가 넣었네.. 바보인가..
 		//System.out.println("===" + videoService.getTimeList());
 		//return "updateOK"; 
@@ -152,7 +152,7 @@ public class HomeController {
 		videovo.setLastTime(0.0);
 		videovo.setTimer(3.0);
 		
-		//model.addAttribute("list", videoService.getTime(videovo.getStudentID()));
+		
 		//dao.updateTime(videovo);
 		
 		if (dao.updateTime(videovo) == 0) {
@@ -176,9 +176,7 @@ public class HomeController {
 			System.out.println("구글 ID로 로그인 성공!");
 			session.setAttribute("login", loginvo);
 			
-		} 
-		
-		else { // 로그인 실패
+		} else { // 로그인 실패
 			System.out.println("구글 정보가 DB에 저장 안되어있음!");
 			if (videoService.updateTime(videovo) == 0) {
 				System.out.println("구글 정보로 회원가입 실패! 왜일까?? ");

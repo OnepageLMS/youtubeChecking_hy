@@ -30,7 +30,9 @@ public class VideoDAO {
 	public VideoVO getTime(int id) {
 		return sqlSession.selectOne("Video.getTime", id);
 	}
-
+	
+	
+	
 	public List<VideoVO> getTimeList() {
 		List<VideoVO> result = sqlSession.selectList("Video.getTimeList");
 		return result;

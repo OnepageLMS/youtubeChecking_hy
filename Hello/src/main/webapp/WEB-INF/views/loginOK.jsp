@@ -10,7 +10,7 @@
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 	
 </head>
-<body >
+<body>
 
     <div id="gangnamStyleIframe"></div>
  	
@@ -22,7 +22,7 @@
 			
 			</div>
 			<div><input type="submit" id="test1" name ="lastTime" value ="0.0" onclick="stopYoutube()" ></div><br />
-			<div><input  type = "hidden" id="test3" name ="studentID" value = "${list.studentID}"></div><br />
+			<div><input id="test3" name ="studentID"  ></div><br />
 			<div><input type = "hidden" id="test2" name ="timer" value ="0.0" ></div><br />
 		</div>
  	</form>
@@ -30,14 +30,21 @@
  	<!--<div>
 	 		<h1>Hello world!<a href = "list/3">Click Here</a></h1>
 	 	</div>  -->
+	 	
+	 	
+	 	<tbody>
+            <c:forEach items="${list}" var="user">
+                <tr>
+                    <div type = "hidden" id="startTime">${user.lastTime}</div>
+               		<div type = "hidden" id="addTimer">${user.timer}</div>
+                </tr>
+            </c:forEach>
+        </tbody>
         
-    
-      	<div type = "hidden" id="startTime">${list.lastTime}</div>
-        <div type = "hidden" id="addTimer">${list.timer}</div>
+      
 	
 	
     <script type="text/javascript">
-    	//alert(${list.lastTime});
         /**
          * Youtube API 로드 
          This code loads the IFrame Player API code asynchronously.
@@ -93,7 +100,6 @@
 		  var min = 0;
 		  var sec = 0;
 		  var timer;
-		var flag = 0;
 		  
         function onPlayerStateChange(event) {
         	
@@ -102,25 +108,6 @@
         		
         		//player.seekTo(20, true);  //특정시간부터 실행하도록 하기
         		//player.playVideo();
-        		
-        		if(flag == 0){
-        			if (confirm("이어서 시청하시겠습니까?") == true){    //확인
-
-            		    //return;
-        				flag = 1;
-
-            		}
-            		
-            		else{   //취소
-            			
-            			//player.stopVideo();
-            			player.seekTo(0, true);
-            			flag = 1;
-            			return;
-
-            		}
-
-        		}
         		
         		
         		timer = setInterval(function(){
@@ -146,9 +133,8 @@
     		        }
     				//console.log(time);
     				//console.log(" : " + parseInt(addTimer.innerText)/10);
-    				console.log(" time : " +  (time+ parseInt(addTimer.innerText)));
+    				//console.log(" time : " + time + parseInt(addTimer.innerText);
     		        document.getElementById("time").innerHTML = th + ":" + tm + ":" + ts;
-    		        //document.getElementById("test2").value = time ;
     		        document.getElementById("test2").value = time + parseInt(addTimer.innerText);
     		        //document.getElementById("test2").value = th * 3600 + tm * 60 + ts + parseInt(addTimer.innerText);
     		      }, 1000);
