@@ -4,6 +4,7 @@ package com.mycompany.myapp.videocheck;
 
 public class VideoVO {
 	private int id;
+	private int videoID;
 	private String studentID;
 	private double lastTime;
 	private double timer;
@@ -13,6 +14,13 @@ public class VideoVO {
 	}
 	public void setID(int id) {
 		this.id = id;
+	}
+	
+	public int getvideoID() {
+		return videoID;
+	}
+	public void setvideoID(int videoID) {
+		this.videoID = videoID;
 	}
 	
 	public String getStudentID() {

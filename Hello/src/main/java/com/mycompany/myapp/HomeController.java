@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -36,6 +37,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.mycompany.myapp.googleLogin.GoogleOAuthRequest;
 import com.mycompany.myapp.googleLogin.GoogleOAuthResponse;
+import com.mycompany.myapp.playlist.PlaylistDAO;
+import com.mycompany.myapp.playlist.PlaylistService;
 import com.mycompany.myapp.videocheck.VideoDAO;
 import com.mycompany.myapp.videocheck.VideoService;
 import com.mycompany.myapp.videocheck.VideoVO;
@@ -51,8 +54,12 @@ public class HomeController {
 	@Autowired
 	VideoService videoService;
 	
+	@Autowired
+	PlaylistService playlistService;
+	
 	@Inject
     private VideoDAO dao;
+	private PlaylistDAO pdao;
 
 	
 	
@@ -76,24 +83,16 @@ public class HomeController {
 		
 		String formattedDate = dateFormat.format(date);
 		
-		//VideoVO vo = new VideoVO();
 		
-		//VideoVO videoVO = videoService.getTime(vo.getID());
-		//model.addAttribute("list", videoVO);
-		
-		//model.addAttribute("serverTime", formattedDate );
-		//VideoVO vo = new VideoVO();
-		//System.out.println("id: " + vo.getID() + " " + vo.getStudentID() + " " + vo.getLastTime());
-		//System.out.println("??? : " + videoService.getTime(vo.getID()));
-		//model.addAttribute("list", videoVO);
-		
-		//model.addAttribute("list", videoService.getTimeList()); 
 		System.out.println("test : " + videoService.getTime(103).getID() + "  ");
 		model.addAttribute("list", videoService.getTime(103)); //여기에 내가 넣었네.. 바보인가..
-		//System.out.println("===" + videoService.getTimeList());
-		//return "updateOK"; 
 		
-		return "updateOK";
+		
+		//System.out.println("playlist : " + playlistService.getVideoList(0)+ "  ");
+		model.addAttribute("playlist", playlistService.getVideoList(0));
+		 
+		
+		return "showVideo";
 	}
 	
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
@@ -211,6 +210,31 @@ public class HomeController {
 	
 	@RequestMapping(value = "/updateok", method = RequestMethod.POST)
 	public String updatePostOK(VideoVO vo) {
+		if (videoService.updateTime(vo) == 0) {
+			System.out.println("데이터 업데이트 실패 ");
+			videoService.insertTime(vo);
+
+		}
+		else
+			System.out.println("데이터 업데이트 성공!!!");
+		return "redirect:/";
+	}
+	
+	@RequestMapping(value = "/changevideo", method = RequestMethod.POST)
+	@ResponseBody
+	public String changeVideoOK(HttpServletRequest request) {
+		double lastTime = Double.parseDouble(request.getParameter("lastTime"));
+		double timer = Double.parseDouble(request.getParameter("timer"));
+		String studentID = request.getParameter("studentID");
+		int videoID = Integer.parseInt(request.getParameter("videoID"));
+		
+		VideoVO vo = new VideoVO();
+		
+		vo.setLastTime(lastTime);
+		vo.setStudentID(studentID);
+		vo.setvideoID(videoID);
+		vo.setTimer(timer);
+		
 		if (videoService.updateTime(vo) == 0) {
 			System.out.println("데이터 업데이트 실패 ");
 			videoService.insertTime(vo);

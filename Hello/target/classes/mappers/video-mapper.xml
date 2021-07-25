@@ -3,16 +3,16 @@
 
 <mapper namespace="Video">
 	<insert id="insertTime">
-		insert into videocheck (studentID ,lastTime, timer)
+		insert into videocheck (videoID, studentID ,lastTime, timer)
 		values
-		(#{studentID}, #{lastTime}, #{timer})
+		(#{videoID}, #{studentID}, #{lastTime}, #{timer})
 		
 	</insert>
 	
 	<update id="updateTime">
 		update videocheck
 		set lastTime=#{lastTime}, timer=#{timer}
-		where studentID=#{studentID}
+		where studentID=#{studentID} AND videoID=#{videoID}
 	</update>
 	
 	<delete id="deleteTime">

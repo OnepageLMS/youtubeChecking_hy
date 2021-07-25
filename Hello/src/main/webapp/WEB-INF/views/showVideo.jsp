@@ -8,6 +8,7 @@
     <title>VideoCheck</title>
     <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<script src="http://code.jquery.com/jquery-3.1.1.js"></script>
 	
 </head>
 <body>
@@ -34,7 +35,14 @@
     
       	<div type = "hidden" id="startTime">${list.lastTime}</div>
         <div type = "hidden" id="addTimer">${list.timer}</div>
-	
+        
+        
+        <c:forEach items="${playlist}" var ="p">
+        	<div id="videoID"> ${p.id}</div>
+			<div id="youtubeID" onclick="viewVideo('${p.youtubeID}', ${p.id})"> ${p.youtubeID}</div>
+			
+        </c:forEach>
+		
 	
     <script type="text/javascript">
     	//alert(${list.lastTime});
@@ -53,13 +61,84 @@
          * 페이지 로드 시 표시할 플레이어 개체를 만들어야 한다.
          This function creates an <iFrame> after the API code downloads.
          */
+         
+         
         var player;
+        var youtubeID = document.getElementById("youtubeID");
+        var videoId = youtubeID.innerText; //처음에는 플레이리스트의 첫번째 영상 실행하도록
+        
+        var startTime = document.getElementById("startTime");
+        var addTimer = document.getElementById("addTimer");
+        
+        var playerState;
+        var time = 0;
+		var starFlag = false;
+		
+		var hour = 0;
+		var min = 0;
+	    var sec = 0;
+		var timer;
+		var flag = 0;
+		
+		var howmanytime = document.getElementById("test2").value ;
+        
+        
+        function viewVideo(id, videoID) { // 선택한 비디오 아이디를 가지고 플레이어 띄우기
+        	var studentID = document.getElementById("test3").value;
+        	//var videoID = document.getElementById("videoID").innerText;
+        	document.getElementById("test1").value = player.getCurrentTime();
+        	
+        	//console.log("studentID : " + studentID + " lastTime : " +document.getElementById("test1").value );
+        	console.log("id : " + videoID);
+ 			//videoId = id; //이에 맞는 영상을 실행하기 위해서 , loadVideoById함수의 파라미터로 넘겨주기 위해서
+ 			//console.log("videoId : " +videoId);
+ 			flag = 0;
+ 			time = 0;
+ 			
+ 			if (confirm("다른 영상으로 변경하시겠습니까? ") == true){    //확인
+				//이 전에 db에 lastTime, timer 저장하기 ajax를 써봅시다!
+				
+				$.ajax({
+					'type' : "post",
+					'url' : "http://localhost:8080/myapp/changevideo",
+					'data' : {
+								lastTime : document.getElementById("test1").value,
+								studentID : studentID,
+								videoID : videoID,
+								timer : howmanytime
+								
+					},
+					success : function(data){
+						alert("success");
+						//getAllPlaylist();
+				
+					}, error : function(err){
+						alert("playlist 추가 실패! : ", err.responseText);
+					}
+				});
+ 			
+ 			
+ 				player.loadVideoById(id, startTime.innerText, "large");
+    		}
+    		
+    		else{   //취소
+    			
+    			
+    			return;
+
+    		}
+ 			
+ 			
+ 			//player.loadVideoById(videoId, startTime.innerText, "large");
+ 		}
+        
+        
         function onYouTubeIframeAPIReady() {
+        	console.log(youtubeID.innerText);
             player = new YT.Player('gangnamStyleIframe', {
                 height: '315',            // <iframe> 태그 지정시 필요없음
                 width: '560',             // <iframe> 태그 지정시 필요없음
-                videoId: 
-                	'gq4S-ovWVlM',
+                videoId: videoId,
                 	
                   // <iframe> 태그 지정시 필요없음
                 playerVars: {             // <iframe> 태그 지정시 필요없음
@@ -74,35 +153,20 @@
             //window.tmp_obj = player;
         }
         
-        var startTime = document.getElementById("startTime");
-        var addTimer = document.getElementById("addTimer");
+        
         function onPlayerReady(event) { 
             console.log('onPlayerReady 실행');
-            console.log(startTime.innerText);
-            // 플레이어 자동실행 (주의: 모바일에서는 자동실행되지 않음)
-			// event.target.playVideo();
-            //console.log("current time : " + tmp_obj.getCurrentTime());
-            console.log("duration : " + player.getDuration());
-            //player.pauseVideo();
             player.seekTo(startTime.innerText, true);
             player.pauseVideo();
         }
         
-        var playerState;
-        var time = 0;
-		var starFlag = true;
-		
-		var hour = 0;
-		  var min = 0;
-		  var sec = 0;
-		  var timer;
-		var flag = 0;
 		  
         function onPlayerStateChange(event) {
         	
+        	/*영상이 시작하기 전에 이전에 봤던 곳부터 이어봤는지 물어보도록!*/
         	if(event.data == -1) {
         		
-				if(flag == 0){
+				if(flag == 0){ //이거 flag안걸면 자꾸 2번씩 물어보는디..? //걸면 안물어보고 그냥 실행해벌임... 미쳐버
         			
         			if (confirm("이어서 시청하시겠습니까?") == true){    //확인
         				
@@ -123,67 +187,63 @@
         		}
         	}
         	
+        	/*영상이 실행될 때 타이머 실행하도록!*/
         	if(event.data == 1) {
-        		//이 confirm창이 뜰때는 youtube가 실행되고 있으면 안되는데,,
-    			//근데 event.data == 1이라는 것 자체가 실행이 되고 있다는 것이여서,, 
-    			//그럼 여기에다가 함수를 만들면 안되는가,,
-        		
-        		/*if(flag == 0){
-        			
-        			if (confirm("이어서 시청하시겠습니까?") == true){    //확인
-        				
-        				flag = 1;
-            		}
-            		
-            		else{   //취소
-            			
-            			player.seekTo(0, true);
-            			flag = 1;
-            			return;
-
-            		}
-
-        		}*/
-        		
-        		
+        		/*타이머 화면에 띄우는 용도*/
+        		starFlag = false;
         		timer = setInterval(function(){
-    		        time++;
-    		
-    		        min = Math.floor(time/60);
-    		        hour = Math.floor(min/60);
-    		        sec = time%60;
-    		        min = min%60;
-    		
-    		        var th = hour;
-    		        var tm = min;
-    		        var ts = sec;
-    		        
-    		        if(th<10){
-    		        	th = "0" + hour;
-    		        }
-    		        if(tm < 10){
-    		        	tm = "0" + min;
-    		        }
-    		        if(ts < 10){
-    		        	ts = "0" + sec;
-    		        }
-    				//console.log(time);
-    				//console.log(" : " + parseInt(addTimer.innerText)/10);
-    				console.log(" time : " +  (time+ parseInt(addTimer.innerText)));
-    		        document.getElementById("time").innerHTML = th + ":" + tm + ":" + ts;
-    		        //document.getElementById("test2").value = time ;
-    		        document.getElementById("test2").value = time + parseInt(addTimer.innerText);
-    		        //document.getElementById("test2").value = th * 3600 + tm * 60 + ts + parseInt(addTimer.innerText);
+        			if(!starFlag){
+        				time++;
+        	    		
+        		        min = Math.floor(time/60);
+        		        hour = Math.floor(min/60);
+        		        sec = time%60;
+        		        min = min%60;
+        		
+        		        var th = hour;
+        		        var tm = min;
+        		        var ts = sec;
+        		        
+        		        if(th<10){
+        		        	th = "0" + hour;
+        		        }
+        		        if(tm < 10){
+        		        	tm = "0" + min;
+        		        }
+        		        if(ts < 10){
+        		        	ts = "0" + sec;
+        		        }
+        				
+        				//console.log(" time : " +  (time+ parseInt(addTimer.innerText)));
+        		        document.getElementById("time").innerHTML = th + ":" + tm + ":" + ts;
+        		        document.getElementById("test2").value = time + parseInt(addTimer.innerText);
+        		        //document.getElementById("test2").value = th * 3600 + tm * 60 + ts + parseInt(addTimer.innerText);
+        		        //console.log("time : " + time + "timer : " + timer);
+        			}
     		      }, 1000);
+        		
+        		
         	}
         	
+        	/*영상이 일시정지될 때 타이머도 멈추도록!*/
         	if(event.data == 2){
         		 if(time != 0){
-        		  console.log("pause!!!");
+        		  console.log("pause!!! timer : " + timer + " time : " + time);
        		      clearInterval(timer);
+       		   		console.log("말 안듣나..?!!!");
        		      starFlag = true;
        		    }
         	}
+        	
+        	/*영상이 종료되었을 때 타이머 멈추도록, 영상을 끝까지 본 경우! (영상의 총 길이가 마지막으로 본 시간으로 들어간다.)*/
+        	if(event.data == 0){
+	       		 if(time != 0){
+	       		  	console.log("stop!!");
+	       		 	document.getElementById("test1").value = player.getDuration();
+	      		    clearInterval(timer);
+	      		    starFlag = true;
+	      	  	}
+       		}
           
  
             // 재생여부를 통계로 쌓는다.
@@ -209,9 +269,6 @@
             }
         }
         
-        
-        
-
         
     </script>
 </body>
