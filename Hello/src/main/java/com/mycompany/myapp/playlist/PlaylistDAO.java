@@ -32,6 +32,7 @@ public class PlaylistDAO {
 	}
 	
 	public List<PlaylistVO> getVideoList(int playlistID) {
+		//System.out.println("dao!");
 		return sqlSession.selectList("Playlist.getVideoList", playlistID);
 	}
 //	public PlaylistVO getPlaylist (int id) {

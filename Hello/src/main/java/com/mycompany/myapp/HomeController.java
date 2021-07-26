@@ -89,7 +89,7 @@ public class HomeController {
 		
 		
 		//System.out.println("playlist : " + playlistService.getVideoList(0)+ "  ");
-		model.addAttribute("playlist", playlistService.getVideoList(0));
+		model.addAttribute("playlist", playlistService.getVideoList(3));
 		 
 		
 		return "showVideo";
@@ -242,7 +242,7 @@ public class HomeController {
 		}
 		else
 			System.out.println("데이터 업데이트 성공!!!");
-		return "redirect:/";
+		return "redirect:/"; // 이것이 ajax 성공시 파라미터로 들어가는구만!!
 	}
 	
 	/*@RequestMapping(value = "/list/{studentID}", method = RequestMethod.GET)
