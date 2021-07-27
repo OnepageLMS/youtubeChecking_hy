@@ -14,5 +14,7 @@ public interface VideoService {
 	
 	public VideoVO getTime(int id);
 	
-	public List<VideoVO> getTimeList(VideoVO vo);
+	public VideoVO getTime(VideoVO vo);
+	
+	public List<VideoVO> getTimeList();
 }

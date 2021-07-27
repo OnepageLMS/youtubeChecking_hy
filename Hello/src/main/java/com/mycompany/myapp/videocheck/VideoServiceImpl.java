@@ -38,10 +38,16 @@ public class VideoServiceImpl implements VideoService {
 	public VideoVO getTime(int id) {
 		return videoDAO.getTime(id);
 	}
+	
+	@Override
+	public VideoVO getTime(VideoVO vo) {
+		//System.out.println("db에 정보있는지 확인!?");
+		return videoDAO.getTime(vo);
+	}
 
 	@Override
-	public List<VideoVO> getTimeList(VideoVO vo) {
-		return videoDAO.getTimeList(vo);
+	public List<VideoVO> getTimeList() {
+		return videoDAO.getTimeList();
 	}
 
 }

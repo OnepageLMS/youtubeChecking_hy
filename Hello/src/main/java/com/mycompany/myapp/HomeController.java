@@ -76,6 +76,11 @@ public class HomeController {
 	 */
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String home(Locale locale, Model model) {
+		//String playlistID = request.getParameter("playlistID");
+		//if(playlistID == null) playlistID = "0";
+		
+		//int playlist = Integer.parseInt(playlistID);
+		//System.out.println("playlist : " + playlist)
 		logger.info("Welcome home! The client locale is {}.", locale);
 		
 		Date date = new Date();
@@ -87,17 +92,20 @@ public class HomeController {
 		//System.out.println("test : " + videoService.getTime(103) + "  ");
 		model.addAttribute("list", videoService.getTime(103)); //여기에 내가 넣었네.. 바보인가..
 		
+		//System.out.println("videocheck : " + videoService.getTimeList(vo) + "  ");
+		//vo.setStudentID(Integer.toString(3));
+		//vo.setvideoID(10);
 		//System.out.println("videocheck : " + videoService.getTimeList() + "  ");
-		vo.setStudentID(Integer.toString(3));
-		vo.setvideoID(10);
-		//System.out.println("videocheck : " + videoService.getTimeList() + "  ");
-		model.addAttribute("videocheck", videoService.getTimeList(vo));
+		//model.addAttribute("videocheck", videoService.getTimeList());
+		
 		System.out.println(vo.getStudentID() + " " + vo.getvideoID());
 		model.addAttribute("playlist", playlistService.getVideoList(3));
 		 
 		
 		return "showVideo";
 	}
+	
+	
 	
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	public String google(RedirectAttributes rttr) {
@@ -278,6 +286,36 @@ public class HomeController {
 		else
 			System.out.println("데이터 업데이트 성공!!!");
 		return "redirect:/"; // 이것이 ajax 성공시 파라미터로 들어가는구만!!
+	}
+	
+	
+	@RequestMapping(value = "/videocheck", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<Double, Double> videoCheck(HttpServletRequest request) {
+		Map<Double, Double> map = new HashMap<Double, Double>();
+		String studentID = request.getParameter("studentID");
+		int videoID = Integer.parseInt(request.getParameter("videoID"));
+		
+		VideoVO vo = new VideoVO();
+		
+		
+		vo.setStudentID(studentID);
+		vo.setvideoID(videoID);
+		
+		if (videoService.getTime(vo) != null) {
+			//System.out.println(videoService.getTime(vo).getLastTime());
+			System.out.println("db에 정보가 있군요!" +videoService.getTime(vo).getLastTime()+ " " +videoService.getTime(vo).getTimer() );
+			//return vo.getLastTime();
+			map.put(videoService.getTime(vo).getLastTime(), videoService.getTime(vo).getTimer());
+			
+
+		}
+		else {
+			System.out.println("처음입니다 !!!");
+			//return null;
+			map.put(-1.0, -1.0); //시간이 음수가 될 수 는 없으니
+		}
+		return map;
 	}
 	
 	

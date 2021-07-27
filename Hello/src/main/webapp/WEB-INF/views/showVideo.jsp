@@ -30,24 +30,27 @@
  	
  	<!--<div>
 	 		<h1>Hello world!<a href = "list/3">Click Here</a></h1>
-	 	</div>  -->
+	 	</div>  
         
-    <!-- 
+     
       	<div type = "hidden" id="startTime">${list.lastTime}</div>
         <div type = "hidden" id="addTimer">${list.timer}</div> -->
         
         <c:forEach items="${playlist}" var ="p" varStatus="vs">
         	<div id="videoID"> ${p.id}</div>
-			<div id="youtubeID" onclick="viewVideo('${p.youtubeID}', ${p.id})"> ${p.youtubeID}</div>
+			<div id="youtubeID" onclick="viewVideo('${p.youtubeID}', ${p.id},  ${p.start_s}, ${p.end_s})"> ${p.youtubeID}</div>
+			<span id="title"> ${p.title}  </span>
+			<span id="start_s"> ${p.start_s}</span>
+			<span id="end_s"> ${p.end_s}</span>
+			<div id="end_s"> ${p.playlistID}</div></br>
         </c:forEach>
 		
-		
-		<c:forEach items="${videocheck}" var ="v" varStatus="vs">
+		<!--<c:forEach items="${videocheck}" var ="v" varStatus="vs">
         	<div id="videocheckId"> id : ${v.videoID}</div>
 			<div><input  type = "hidden" id="studentID" name ="studentID" value = "${v.studentID}"> studentID : ${v.studentID}</div><br />
 			<div type = "hidden" id="startTime">${v.lastTime}</div>
         	<div type = "hidden" id="addTimer">${v.timer}</div>
-        </c:forEach>
+        </c:forEach>-->
         
 	
     <script type="text/javascript">
@@ -73,9 +76,9 @@
         var videoId = youtubeID.innerText; //youtubeID를 가져온다. wzAWI9h3q18 형태
    		var lastVideo = document.getElementById("videoID").innerText; //videoID를 가져온다. 107 형태
         
-        var startTime = document.getElementById("startTime");
+        var startTime = document.getElementById("start_s");
         var addTimer = document.getElementById("addTimer");
-        var studentID = document.getElementById("studentID").value;
+        var studentID = document.getElementById("test3").value;
         
         var playerState;
         var time = 0;
@@ -87,8 +90,10 @@
 		var timer;
 		var flag = 0;
 		
+		var howmanytime = 0;
+		
         
-        function viewVideo(id, videoID) { // 선택한 비디오 아이디를 가지고 플레이어 띄우기
+        function viewVideo(id, videoID, startTime, endTime) { // 선택한 비디오 아이디를 가지고 플레이어 띄우기
         	//var studentID = document.getElementById("studentID").value;
         
         	document.getElementById("test1").value = player.getCurrentTime();
@@ -99,12 +104,11 @@
  	 			time = 0;
 				//이 전에 db에 lastTime, timer 저장하기 ajax를 써봅시다!
 				
-				
 				$.ajax({
 					'type' : "post",
 					'url' : "http://localhost:8080/myapp/changevideo",
 					'data' : {
-								lastTime : document.getElementById("test1").value,
+								lastTime : player.getCurrentTime(),
 								studentID : studentID,
 								videoID : lastVideo,
 								timer : document.getElementById("test2").value
@@ -112,20 +116,47 @@
 					success : function(data){
 						//정보 잘 보냈다면 이것을 실행하라
 						lastVideo = videoID;
-						console.log("success // lastTime: " +document.getElementById("test1").value+ " studetnID : " +studentID+ " videoID : " +videoID+ " timer : " +document.getElementById("test2").value + " watch : " +0);
+					}, 
+					error : function(err){
+						alert("playlist 추가 실패! : ", err.responseText);
+					}
+				}); //보던 영상 정보 저장
+				
+				//앞으로 실행할 영상에 대한 정보를 불러온다. 이미 실행하던 영상이면 시작시간을 start_s가 아닌 lastTime으
+				//var jsmap = new Map();
+				$.ajax({
+					'type' : "post",
+					'url' : "http://localhost:8080/myapp/videocheck",
+					'data' : {
+								studentID : studentID, //지금은 임의로 3으로 설정했지만, 나중에 로그인하면 studentID에 이메일이 들어감
+								videoID : videoID
+					},
+					success : function(data){
+						//data를 리턴 받잖수! 여기의 lastTime을 startTime으로 지정해주어야함.
+						startTime = Object.keys(data);
+						howmanytime = Object.values(data);
+						//console.log("id : " + id + " startTime : " + startTime + "endTime : " +endTime);
+						//player.loadVideoById(id, 10, endTime, "default");
+						player.loadVideoById({'videoId': id,
+				               'startSeconds': startTime,
+				               'endSeconds': endTime,
+				               'suggestedQuality': 'default'})
 					}, 
 					error : function(err){
 						alert("playlist 추가 실패! : ", err.responseText);
 					}
 				});
- 			
- 				player.loadVideoById(id, startTime.innerText, "large");
+ 				
+				//이 영상을 처음보는 것이 아니라면 이전에 보던 시간부터 startTime을 설정해두기
+ 				
     		}
     		
     		else{   //취소
     			return;
 
     		}
+ 			//console.log("startTime2 : " +startTime);
+ 			//player.loadVideoById(id, startTime, "large");
  		}
         
         
@@ -149,9 +180,31 @@
         
         function onPlayerReady(event) { 
             console.log('onPlayerReady 실행');
-            player.seekTo(startTime.innerText, true);
-            player.pauseVideo();
-           	console.log("onready pause!");
+            //console.log("startTime : " +startTime.innerText);
+            var start = startTime.innerText;
+            console.log("videoID" + lastVideo + " start : " + start);
+            $.ajax({
+				'type' : "post",
+				'url' : "http://localhost:8080/myapp/videocheck",
+				'data' : {
+							studentID : studentID,
+							videoID : lastVideo
+				},
+				success : function(data){
+					
+					if(Object.keys(data) != -1){
+						start = Object.keys(data);
+					}
+					
+					player.seekTo(start, true);
+			        player.pauseVideo();
+					
+				}, 
+				error : function(err){
+					alert("playlist 추가 실패! : ", err.responseText);
+				}
+			});
+            
         }
         
 		  
@@ -189,7 +242,7 @@
         				
         				
         		        document.getElementById("time").innerHTML = th + ":" + tm + ":" + ts;
-        		        document.getElementById("test2").value = time + parseInt(addTimer.innerText);
+        		        document.getElementById("test2").value = time + parseInt(howmanytime);
         		        
         			}
     		      }, 1000);
@@ -231,8 +284,6 @@
         		
 	       		 if(time != 0){
 	       		  	console.log("stop!!");
-	       		 	//document.getElementById("test1").value = player.getDuration();
-	       		 	//console.log(document.getElementById("test1").value);
 	      		    clearInterval(timer);
 	      		    starFlag = true;
 	      		    time = 0;

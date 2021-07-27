@@ -31,11 +31,16 @@
 		where id=#{id}
 	</select>
 	
+	<select id="getTime2" resultType="VideoVO">
+		select *
+		from videocheck
+		where studentID=#{studentID} AND videoID=#{videoID}
+	</select>
+	
 	<select id="getTimeList" resultType="VideoVO">
 		SELECT * 
-		FROM videocheck vc
-		LEFT OUTER JOIN Video v ON vc.videoID = v.id
-		where studentID=#{studentID} AND videoID=#{videoID}
+		FROM videocheck order
+		by id desc
 	</select>
 	
 </mapper>
