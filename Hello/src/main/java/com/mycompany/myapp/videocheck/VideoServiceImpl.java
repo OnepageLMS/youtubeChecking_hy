@@ -30,13 +30,18 @@ public class VideoServiceImpl implements VideoService {
 	}
 	
 	@Override
+	public int updateWatch(VideoVO vo) {
+		return videoDAO.updateWatch(vo);
+	}
+	
+	@Override
 	public VideoVO getTime(int id) {
 		return videoDAO.getTime(id);
 	}
 
 	@Override
-	public List<VideoVO> getTimeList() {
-		return videoDAO.getTimeList();
+	public List<VideoVO> getTimeList(VideoVO vo) {
+		return videoDAO.getTimeList(vo);
 	}
 
 }

@@ -3,9 +3,9 @@
 
 <mapper namespace="Video">
 	<insert id="insertTime">
-		insert into videocheck (videoID, studentID ,lastTime, timer)
+		insert into videocheck (videoID, studentID ,lastTime, timer, watch)
 		values
-		(#{videoID}, #{studentID}, #{lastTime}, #{timer})
+		(#{videoID}, #{studentID}, #{lastTime}, #{timer}, #{watch})
 		
 	</insert>
 	
@@ -15,18 +15,27 @@
 		where studentID=#{studentID} AND videoID=#{videoID}
 	</update>
 	
+	<update id="updateWatch">
+		update videocheck
+		set lastTime=#{lastTime}, timer=#{timer}, watch=#{watch}
+		where studentID=#{studentID} AND videoID=#{videoID}
+	</update>
+	
 	<delete id="deleteTime">
 		delete from videocheck where id=#{id}
 	</delete>
 	
 	<select id="getTime" resultType="VideoVO">
-		select * from videocheck where
-		id=#{id}
+		select * 
+		from videocheck 
+		where id=#{id}
 	</select>
 	
 	<select id="getTimeList" resultType="VideoVO">
-		select * from videocheck order
-		by id asc
+		SELECT * 
+		FROM videocheck vc
+		LEFT OUTER JOIN Video v ON vc.videoID = v.id
+		where studentID=#{studentID} AND videoID=#{videoID}
 	</select>
 	
 </mapper>

@@ -27,14 +27,20 @@ public class VideoDAO {
 		return result;
 	}
 	
+	public int updateWatch(VideoVO vo) {
+		int result = sqlSession.update("Video.updateWatch", vo);
+		return result;
+	}
+	
 	public VideoVO getTime(int id) {
+		//System.out.println("2번방문!");
 		return sqlSession.selectOne("Video.getTime", id);
 	}
 	
 	
 	
-	public List<VideoVO> getTimeList() {
-		List<VideoVO> result = sqlSession.selectList("Video.getTimeList");
+	public List<VideoVO> getTimeList(VideoVO vo) {
+		List<VideoVO> result = sqlSession.selectList("Video.getTimeList", vo);
 		return result;
 	}
 }

@@ -8,6 +8,7 @@ public class VideoVO {
 	private String studentID;
 	private double lastTime;
 	private double timer;
+	private int watch;
 	
 	public int getID() {
 		return id;
@@ -42,5 +43,12 @@ public class VideoVO {
 	}
 	public void setTimer(double timer) {
 		this.timer = timer;
+	}
+	
+	public int getWatch() {
+		return watch;
+	}
+	public void setWatch(int watch) {
+		this.watch = watch;
 	}
 }

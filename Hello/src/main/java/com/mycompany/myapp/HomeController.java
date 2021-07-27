@@ -83,12 +83,16 @@ public class HomeController {
 		
 		String formattedDate = dateFormat.format(date);
 		
-		
-		System.out.println("test : " + videoService.getTime(103).getID() + "  ");
+		VideoVO vo = new VideoVO();
+		//System.out.println("test : " + videoService.getTime(103) + "  ");
 		model.addAttribute("list", videoService.getTime(103)); //여기에 내가 넣었네.. 바보인가..
 		
-		
-		//System.out.println("playlist : " + playlistService.getVideoList(0)+ "  ");
+		//System.out.println("videocheck : " + videoService.getTimeList() + "  ");
+		vo.setStudentID(Integer.toString(3));
+		vo.setvideoID(10);
+		//System.out.println("videocheck : " + videoService.getTimeList() + "  ");
+		model.addAttribute("videocheck", videoService.getTimeList(vo));
+		System.out.println(vo.getStudentID() + " " + vo.getvideoID());
 		model.addAttribute("playlist", playlistService.getVideoList(3));
 		 
 		
@@ -224,9 +228,13 @@ public class HomeController {
 	@ResponseBody
 	public String changeVideoOK(HttpServletRequest request) {
 		double lastTime = Double.parseDouble(request.getParameter("lastTime"));
+		System.out.println("lastTime : " +lastTime);
 		double timer = Double.parseDouble(request.getParameter("timer"));
+		System.out.println("timer : " +timer);
 		String studentID = request.getParameter("studentID");
+		System.out.println("studentID : " +studentID);
 		int videoID = Integer.parseInt(request.getParameter("videoID"));
+		System.out.println("videoID : " +videoID);
 		
 		VideoVO vo = new VideoVO();
 		
@@ -244,6 +252,36 @@ public class HomeController {
 			System.out.println("데이터 업데이트 성공!!!");
 		return "redirect:/"; // 이것이 ajax 성공시 파라미터로 들어가는구만!!
 	}
+	
+	@RequestMapping(value = "/changewatch", method = RequestMethod.POST)
+	@ResponseBody
+	public String changeWatchOK(HttpServletRequest request) {
+		double lastTime = Double.parseDouble(request.getParameter("lastTime"));
+		double timer = Double.parseDouble(request.getParameter("timer"));
+		String studentID = request.getParameter("studentID");
+		int videoID = Integer.parseInt(request.getParameter("videoID"));
+		int watch = Integer.parseInt(request.getParameter("watch"));
+		
+		VideoVO vo = new VideoVO();
+		
+		vo.setLastTime(lastTime);
+		vo.setStudentID(studentID);
+		vo.setvideoID(videoID);
+		vo.setTimer(timer);
+		vo.setWatch(watch);
+		
+		if (videoService.updateWatch(vo) == 0) {
+			System.out.println("데이터 업데이트 실패 ");
+			videoService.insertTime(vo);
+
+		}
+		else
+			System.out.println("데이터 업데이트 성공!!!");
+		return "redirect:/"; // 이것이 ajax 성공시 파라미터로 들어가는구만!!
+	}
+	
+	
+	
 	
 	/*@RequestMapping(value = "/list/{studentID}", method = RequestMethod.GET)
 	public String detail(@PathVariable("studentID") int studentID, Model model) {

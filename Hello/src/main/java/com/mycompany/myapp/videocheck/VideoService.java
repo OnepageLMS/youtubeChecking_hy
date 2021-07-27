@@ -10,7 +10,9 @@ public interface VideoService {
 	
 	public int updateTime(VideoVO vo);
 	
+	public int updateWatch(VideoVO vo);
+	
 	public VideoVO getTime(int id);
 	
-	public List<VideoVO> getTimeList();
+	public List<VideoVO> getTimeList(VideoVO vo);
 }

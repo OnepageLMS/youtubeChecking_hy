@@ -23,7 +23,7 @@
 			
 			</div>
 			<div><input type="submit" id="test1" name ="lastTime" value ="0.0" onclick="stopYoutube()" ></div><br />
-			<div><input  type = "hidden" id="test3" name ="studentID" value = "${list.studentID}"></div><br />
+			<div><input  type = "hidden" id="test3" name ="studentID" value = "${list.studentID}"></div><br /> 
 			<div><input type = "hidden" id="test2" name ="timer" value ="0.0" ></div><br />
 		</div>
  	</form>
@@ -32,16 +32,23 @@
 	 		<h1>Hello world!<a href = "list/3">Click Here</a></h1>
 	 	</div>  -->
         
-    
+    <!-- 
       	<div type = "hidden" id="startTime">${list.lastTime}</div>
-        <div type = "hidden" id="addTimer">${list.timer}</div>
-        
+        <div type = "hidden" id="addTimer">${list.timer}</div> -->
         
         <c:forEach items="${playlist}" var ="p" varStatus="vs">
         	<div id="videoID"> ${p.id}</div>
 			<div id="youtubeID" onclick="viewVideo('${p.youtubeID}', ${p.id})"> ${p.youtubeID}</div>
         </c:forEach>
 		
+		
+		<c:forEach items="${videocheck}" var ="v" varStatus="vs">
+        	<div id="videocheckId"> id : ${v.videoID}</div>
+			<div><input  type = "hidden" id="studentID" name ="studentID" value = "${v.studentID}"> studentID : ${v.studentID}</div><br />
+			<div type = "hidden" id="startTime">${v.lastTime}</div>
+        	<div type = "hidden" id="addTimer">${v.timer}</div>
+        </c:forEach>
+        
 	
     <script type="text/javascript">
     	//alert(${list.lastTime});
@@ -61,17 +68,14 @@
          This function creates an <iFrame> after the API code downloads.
          */
          
-       	var arr = new Array();
-         //<c:forEach items="${playlist}" var ="p">
-         	//arr.push({id : "${p.id}", youtubeID : "${p.youtubeID}" });
-         //</c:forEach>
         var player;
         var youtubeID = document.getElementById("youtubeID"); 
-        var videoId = youtubeID.innerText; //youtubeID를 가져온다.
-   		var lastVideo = document.getElementById("videoID").innerText; //videoID를 가져온다.
+        var videoId = youtubeID.innerText; //youtubeID를 가져온다. wzAWI9h3q18 형태
+   		var lastVideo = document.getElementById("videoID").innerText; //videoID를 가져온다. 107 형태
         
         var startTime = document.getElementById("startTime");
         var addTimer = document.getElementById("addTimer");
+        var studentID = document.getElementById("studentID").value;
         
         var playerState;
         var time = 0;
@@ -83,11 +87,9 @@
 		var timer;
 		var flag = 0;
 		
-		//var howmanytime = document.getElementById("test2").value ;
-        
         
         function viewVideo(id, videoID) { // 선택한 비디오 아이디를 가지고 플레이어 띄우기
-        	var studentID = document.getElementById("test3").value;
+        	//var studentID = document.getElementById("studentID").value;
         
         	document.getElementById("test1").value = player.getCurrentTime();
  			
@@ -96,7 +98,8 @@
  				flag = 0;
  	 			time = 0;
 				//이 전에 db에 lastTime, timer 저장하기 ajax를 써봅시다!
-				//console.log("lastvideo: " +lastVideo);
+				
+				
 				$.ajax({
 					'type' : "post",
 					'url' : "http://localhost:8080/myapp/changevideo",
@@ -108,16 +111,14 @@
 					},
 					success : function(data){
 						//정보 잘 보냈다면 이것을 실행하라
-						//player.loadVideoById(id, startTime.innerText, "large");
 						lastVideo = videoID;
-						console.log("success : " + videoID);
+						console.log("success // lastTime: " +document.getElementById("test1").value+ " studetnID : " +studentID+ " videoID : " +videoID+ " timer : " +document.getElementById("test2").value + " watch : " +0);
 					}, 
 					error : function(err){
 						alert("playlist 추가 실패! : ", err.responseText);
 					}
 				});
  			
-				//lastVideo = id;
  				player.loadVideoById(id, startTime.innerText, "large");
     		}
     		
@@ -134,8 +135,6 @@
                 height: '315',            // <iframe> 태그 지정시 필요없음
                 width: '560',             // <iframe> 태그 지정시 필요없음
                 videoId: videoId,
-                	
-                  // <iframe> 태그 지정시 필요없음
                 playerVars: {             // <iframe> 태그 지정시 필요없음
                     controls: '2'
                 },
@@ -145,7 +144,6 @@
                 }
             });
             
-            //window.tmp_obj = player;
         }
         
         
@@ -164,9 +162,7 @@
         	
         	/*영상이 실행될 때 타이머 실행하도록!*/
         	if(event.data == 1) {
-        		/*타이머 화면에 띄우는 용도*/
-        	
-				
+        		
         		starFlag = false;
         		timer = setInterval(function(){
         			if(!starFlag){
@@ -194,6 +190,7 @@
         				
         		        document.getElementById("time").innerHTML = th + ":" + tm + ":" + ts;
         		        document.getElementById("test2").value = time + parseInt(addTimer.innerText);
+        		        
         			}
     		      }, 1000);
         		
@@ -205,20 +202,44 @@
         		 if(time != 0){
         		  console.log("pause!!! timer : " + timer + " time : " + time);
        		      clearInterval(timer);
-       		   		console.log("말 안듣나..?!!!");
        		      starFlag = true;
        		    }
         	}
         	
         	/*영상이 종료되었을 때 타이머 멈추도록, 영상을 끝까지 본 경우! (영상의 총 길이가 마지막으로 본 시간으로 들어간다.)*/
         	if(event.data == 0){
+        		$.ajax({
+					'type' : "post",
+					'url' : "http://localhost:8080/myapp/changewatch",
+					'data' : {
+								lastTime : player.getDuration(), //lastTime에 영상의 마지막 시간을 넣어주기
+								studentID : studentID, //studentID 그대로
+								videoID : lastVideo, //videoID 그대로
+								timer : document.getElementById("test2").value, //timer도 업데이트를 위해 필요
+								watch : 1 //영상을 다 보았으니 시청여부는 1로(출석) 업데이트!
+					},
+					
+					success : function(data){
+						//정보 잘 보냈다면 이것을 실행하라
+						//lastVideo = videoID;
+						console.log("lastTime : " +player.getDuration()+ "timer : " + document.getElementById("test2").value );
+					}, 
+					error : function(err){
+						alert("playlist 추가 실패! : ", err.responseText);
+					}
+				});
+        		
 	       		 if(time != 0){
 	       		  	console.log("stop!!");
-	       		 	document.getElementById("test1").value = player.getDuration();
+	       		 	//document.getElementById("test1").value = player.getDuration();
+	       		 	//console.log(document.getElementById("test1").value);
 	      		    clearInterval(timer);
 	      		    starFlag = true;
 	      		    time = 0;
+	      		    
+	      		  
 	      	  	}
+	       	
        		}
           
  
@@ -228,11 +249,8 @@
         
         function stopYoutube() {
         	document.getElementById("test1").value = player.getCurrentTime();
-        	//document.getElementById("test2").value = time + parseInt(addTimer.innerText);
             player.seekTo(0, true);     // 영상의 시간을 0초로 이동시킨다. 
             player.stopVideo();
-            //console.log(result);
-            //return result;
         }
 
        

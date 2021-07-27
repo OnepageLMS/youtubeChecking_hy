@@ -85,13 +85,7 @@
         
         function viewVideo(id, videoID) { // 선택한 비디오 아이디를 가지고 플레이어 띄우기
         	var studentID = document.getElementById("test3").value;
-        	//var videoID = document.getElementById("videoID").innerText;
         	document.getElementById("test1").value = player.getCurrentTime();
-        	
-        	//console.log("studentID : " + studentID + " lastTime : " +document.getElementById("test1").value );
-        	console.log("id : " + videoID);
- 			//videoId = id; //이에 맞는 영상을 실행하기 위해서 , loadVideoById함수의 파라미터로 넘겨주기 위해서
- 			//console.log("videoId : " +videoId);
  			
  			if (confirm("다른 영상으로 변경하시겠습니까? ") == true){    //확인
  				flag = 0;
@@ -218,12 +212,9 @@
         		        	ts = "0" + sec;
         		        }
         				
-        				//console.log(" time : " +  (time+ parseInt(addTimer.innerText)));
         		        document.getElementById("time").innerHTML = th + ":" + tm + ":" + ts;
-        		        //console.log(" time : " +  (time+ parseInt(addTimer.innerText)));
         		        document.getElementById("test2").value = time + parseInt(addTimer.innerText);
-        		        //document.getElementById("test2").value = th * 3600 + tm * 60 + ts + parseInt(addTimer.innerText);
-        		        //console.log("time : " + time + "timer : " + timer);
+        		      	//addTimer에 맞는 videoID, studentID를 가진 정보가 들어올 수 있도록
         			}
     		      }, 1000);
         		
