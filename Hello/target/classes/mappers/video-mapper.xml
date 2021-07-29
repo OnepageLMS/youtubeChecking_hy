@@ -3,9 +3,9 @@
 
 <mapper namespace="Video">
 	<insert id="insertTime">
-		insert into videocheck (videoID, studentID ,lastTime, timer, watch)
+		insert into videocheck (videoID, playlistID, studentID ,lastTime, timer, watch)
 		values
-		(#{videoID}, #{studentID}, #{lastTime}, #{timer}, #{watch})
+		(#{videoID}, #{playlistID}, #{studentID}, #{lastTime}, #{timer}, #{watch})
 		
 	</insert>
 	

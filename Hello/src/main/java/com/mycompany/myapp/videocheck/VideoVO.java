@@ -5,6 +5,7 @@ package com.mycompany.myapp.videocheck;
 public class VideoVO {
 	private int id;
 	private int videoID;
+	private int playlistID;
 	private String studentID;
 	private double lastTime;
 	private double timer;
@@ -22,6 +23,13 @@ public class VideoVO {
 	}
 	public void setvideoID(int videoID) {
 		this.videoID = videoID;
+	}
+	
+	public int getplaylistID() {
+		return playlistID;
+	}
+	public void setplaylistID(int playlistID) {
+		this.playlistID = playlistID;
 	}
 	
 	public String getStudentID() {

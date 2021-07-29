@@ -39,6 +39,8 @@ import com.mycompany.myapp.googleLogin.GoogleOAuthRequest;
 import com.mycompany.myapp.googleLogin.GoogleOAuthResponse;
 import com.mycompany.myapp.playlist.PlaylistDAO;
 import com.mycompany.myapp.playlist.PlaylistService;
+import com.mycompany.myapp.playlistCheck.PlaylistCheckService;
+import com.mycompany.myapp.playlistCheck.PlaylistCheckVO;
 import com.mycompany.myapp.videocheck.VideoDAO;
 import com.mycompany.myapp.videocheck.VideoService;
 import com.mycompany.myapp.videocheck.VideoVO;
@@ -56,6 +58,9 @@ public class HomeController {
 	
 	@Autowired
 	PlaylistService playlistService;
+	
+	@Autowired
+	PlaylistCheckService playlistcheckService;
 	
 	@Inject
     private VideoDAO dao;
@@ -100,7 +105,6 @@ public class HomeController {
 		
 		System.out.println(vo.getStudentID() + " " + vo.getvideoID());
 		model.addAttribute("playlist", playlistService.getVideoList(3));
-		 
 		
 		return "showVideo";
 	}
@@ -204,11 +208,11 @@ public class HomeController {
 		return "updateOK";
 	}
 	
-	@RequestMapping(value = "/main", method = RequestMethod.GET)
+	@RequestMapping(value = "/attendance", method = RequestMethod.POST)
 	public String main(Model model) {
-		
+		model.addAttribute("playlistCheck", playlistcheckService.getAllPlaylsit());
 
-		return "updateOK";
+		return "playlistCheck";
 	}
 	
 	@RequestMapping(value = "/addok", method = RequestMethod.POST)
@@ -243,6 +247,8 @@ public class HomeController {
 		System.out.println("studentID : " +studentID);
 		int videoID = Integer.parseInt(request.getParameter("videoID"));
 		System.out.println("videoID : " +videoID);
+		int playlistID = Integer.parseInt(request.getParameter("playlistID"));
+		System.out.println("videoID : " +playlistID);
 		
 		VideoVO vo = new VideoVO();
 		
@@ -250,6 +256,9 @@ public class HomeController {
 		vo.setStudentID(studentID);
 		vo.setvideoID(videoID);
 		vo.setTimer(timer);
+		vo.setplaylistID(playlistID);
+		
+		System.out.println("playlist id : " +vo.getplaylistID());
 		
 		if (videoService.updateTime(vo) == 0) {
 			System.out.println("데이터 업데이트 실패 ");
@@ -278,13 +287,18 @@ public class HomeController {
 		vo.setTimer(timer);
 		vo.setWatch(watch);
 		
+		
 		if (videoService.updateWatch(vo) == 0) {
-			System.out.println("데이터 업데이트 실패 ");
+			System.out.println("데이터 업데이트 실패 ======= ");
 			videoService.insertTime(vo);
 
 		}
-		else
-			System.out.println("데이터 업데이트 성공!!!");
+		else {
+			System.out.println("데이터 업데이트 성공!!! =====");
+			//playlistcheckService.updateTotalWatched(pcvo);
+			
+		}
+			
 		return "redirect:/"; // 이것이 ajax 성공시 파라미터로 들어가는구만!!
 	}
 	
@@ -303,12 +317,8 @@ public class HomeController {
 		vo.setvideoID(videoID);
 		
 		if (videoService.getTime(vo) != null) {
-			//System.out.println(videoService.getTime(vo).getLastTime());
 			System.out.println("db에 정보가 있군요!" +videoService.getTime(vo).getLastTime()+ " " +videoService.getTime(vo).getTimer() );
-			//return vo.getLastTime();
 			map.put(videoService.getTime(vo).getLastTime(), videoService.getTime(vo).getTimer());
-			
-
 		}
 		else {
 			System.out.println("처음입니다 !!!");
@@ -316,6 +326,31 @@ public class HomeController {
 			map.put(-1.0, -1.0); //시간이 음수가 될 수 는 없으니
 		}
 		return map;
+	}
+	
+	@RequestMapping(value = "/playlistcheck", method = RequestMethod.POST)
+	@ResponseBody
+	public String playlistCheck(HttpServletRequest request) {
+		int playlistID = Integer.parseInt(request.getParameter("playlistID"));
+		String studentID = request.getParameter("studentID");
+		
+		PlaylistCheckVO pcvo = new PlaylistCheckVO();
+		
+		pcvo.setStudentID(Integer.parseInt(studentID));
+		pcvo.setPlaylistID(playlistID);
+		
+		if (playlistcheckService.updateTotalWatched(pcvo) == 0) {
+			System.out.println("플레이리스트 업데이트 실패 ");
+			//videoService.insertTime(vo);
+
+		}
+		else {
+			System.out.println("플레이리스트 업데이트 성공!!!" +playlistcheckService.updateTotalWatched(pcvo));
+			//playlistcheckService.updateTotalWatched(pcvo);
+			
+		}
+			
+		return "redirect:/"; // 이것이 ajax 성공시 파라미터로 들어가는구만!!
 	}
 	
 	
