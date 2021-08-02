@@ -35,7 +35,7 @@
 		        	<div id="videoID" style="display:none;">${p.id}</div>
 					<div id="youtubeID" style="display:none;">${p.youtubeID}</div>
 					<div id="get_view"></div>
-					<div id="title" onclick="viewVideo('${p.youtubeID}', ${p.id},  ${p.start_s}, ${p.end_s})" style="display:none;"> ${p.title}  </div>
+					<div id="title" onclick="viewVideo('${p.youtubeID}', ${p.id}, ${p.start_s}, ${p.end_s})" style="display:none;"> ${p.title}  </div>
 					<div id="start_s" style="display:none;">${p.start_s}</div>
 					<div id="end_s" style="display:none;" >${p.end_s}</div>
 					<div id="playlistID" style="display:none;">${p.playlistID}</div></br>
@@ -52,24 +52,47 @@
 	 	
 	 	$(function(){
 	 		myThumbnail();
-	 		myAttendance();
 	 	});
 	 	
 	 	function myThumbnail(){
-	 		$.ajax({
+	 		$.ajax({ //thumbnail을 위해 실행하는 ajax
 				'type' : "post",
 				'url' : "http://localhost:8080/myapp/tothumbnail",
 				'data' : {
 							playlistID : document.getElementById("playlistID").innerText
 				},
-				success : function(data){
-					for(var i=0; i<data.length; i++){
-				 		var thumbnail = '<img src="https://img.youtube.com/vi/' + data[i].youtubeID + '/1.jpg">';
-				 		$("#get_view").append(thumbnail + '<div id="title" onclick="viewVideo(\'' +data[i].youtubeID.toString() + '\'' + ',' + data[i].id + ',' + data[i].start_s + ',' + data[i].end_s + ')" >' +data[i].title+ '</div>' );
-				 		//$("#get_view").remove();
-				 		//$("#get_view").append(thumbnail);
-				 		console.log(thumbnail);
-					}
+				success : function(data){ 
+					$.ajax({ //watched ==1인 영상을 체크해서 표시하기 위한 ajax
+						'type' : "post",
+						'url' : "http://localhost:8080/myapp/toattendance",
+						'data' : {
+									studentID : document.getElementById("test3").innerText,
+									videoID : document.getElementById("videoID").innerText
+						},
+						success : function(s_data){
+							for(var i=0; i<data.length; i++){
+								console.log("data.length : " +data.length+ " s_data.length : " +s_data.length);
+						 		var thumbnail = '<img src="https://img.youtube.com/vi/' + data[i].youtubeID + '/1.jpg">';
+						 		
+						 		if(s_data[i].watched == 1){
+									console.log(s_data[i].videoID + " " + s_data[i].watched + " " );
+									$("#get_view").append(thumbnail + '<div id="title"  style = "background-color: orange;" onclick="viewVideo(\'' +data[i].youtubeID.toString() + '\'' + ',' + data[i].id + ',' + data[i].start_s + ',' + data[i].end_s + ')" >' +data[i].title+ '</div>' );
+							 		
+								}
+						 		else {
+						 			console.log("watched " +  s_data[i].videoID + " " +s_data[i].watched + " ");
+						 			$("#get_view").append(thumbnail + '<div id="title" onclick="viewVideo(\'' +data[i].youtubeID.toString() + '\'' + ',' + data[i].id + ',' + data[i].start_s + ',' + data[i].end_s + ')" >' +data[i].title+ '</div>' );
+						 		}
+						 			
+						 		
+						 		console.log(thumbnail);
+							}
+						}, 
+						error : function(err){
+							alert("playlist thumbnail 언제 가져올래?2 : ", err.responseText);
+						}
+					}); 
+					
 				}, 
 				error : function(err){
 					alert("playlist thumbnail 언제 가져올래? : ", err.responseText);
@@ -77,7 +100,6 @@
 			}); 
 	 	}
 	 	
-	 	//function
 	 	
  	</script>
  		
@@ -279,6 +301,7 @@
         	/*영상이 실행될 때 타이머 실행하도록!*/
         	if(event.data == 1) {
         		
+        		console.log(event.data);
         		
         		starFlag = false;
         		timer = setInterval(function(){

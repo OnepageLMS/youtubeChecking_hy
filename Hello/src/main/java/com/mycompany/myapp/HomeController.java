@@ -241,6 +241,7 @@ public class HomeController {
 		
 		if (playlistService.getVideoList(pvo) != null) {
 			System.out.println("플레이리스트에 뭐가 들어있긴 하네요!");
+			System.out.println(playlistService.getVideoList(pvo));
 			//videoService.insertTime(vo);
 
 		}
@@ -250,6 +251,31 @@ public class HomeController {
 		}
 			
 		return playlistService.getVideoList(pvo); // 이것이 ajax 성공시 파라미터로 들어가는구만!!
+	}
+	
+	@RequestMapping(value = "/toattendance", method = RequestMethod.POST)
+	@ResponseBody
+	public List<VideoVO> toAttendance(HttpServletRequest request) {
+		String studentID = request.getParameter("studentID");
+		int videoID = Integer.parseInt(request.getParameter("videoID"));
+		
+		VideoVO vo = new VideoVO();
+	
+		vo.setStudentEmail(studentID);
+		vo.setvideoID(videoID);
+		
+		
+		if (videoService.getTimeList() != null) {
+			System.out.println("플레이리스트에 뭐가 들어있긴 하네요!");
+			//videoService.insertTime(vo);
+
+		}
+		else {
+			System.out.println("플레이리스트 텅텅!");
+			
+		}
+			
+		return videoService.getTimeList(); // 이것이 ajax 성공시 파라미터로 들어가는구만!!
 	}
 	
 	@RequestMapping(value = "/changevideo", method = RequestMethod.POST)
