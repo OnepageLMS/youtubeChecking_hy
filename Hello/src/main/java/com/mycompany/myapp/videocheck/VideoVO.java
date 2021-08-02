@@ -1,15 +1,19 @@
 package com.mycompany.myapp.videocheck;
 
+import java.sql.Date;
+
 //import java.math.BigDecimal;
 
 public class VideoVO {
 	private int id;
 	private int videoID;
 	private int playlistID;
-	private String studentID;
+	private String studentEmail;
 	private double lastTime;
 	private double timer;
-	private int watch;
+	private int watched;
+	private Date regDate;
+	private Date modDate;
 	
 	public int getID() {
 		return id;
@@ -32,11 +36,11 @@ public class VideoVO {
 		this.playlistID = playlistID;
 	}
 	
-	public String getStudentID() {
-		return studentID;
+	public String getStudentEmail() {
+		return studentEmail;
 	}
-	public void setStudentID(String studentID) {
-		this.studentID = studentID;
+	public void setStudentEmail(String studentEmail) {
+		this.studentEmail = studentEmail;
 	}
 	
 	public double getLastTime() {
@@ -53,10 +57,24 @@ public class VideoVO {
 		this.timer = timer;
 	}
 	
-	public int getWatch() {
-		return watch;
+	public int getWatched() {
+		return watched;
 	}
-	public void setWatch(int watch) {
-		this.watch = watch;
+	public void setWatched(int watched) {
+		this.watched = watched;
+	}
+	
+	public Date getRegDate() {
+		return regDate;
+	}
+	public void setRegDate(Date regDate) {
+		this.regDate = regDate;
+	}
+	
+	public Date getModDate() {
+		return modDate;
+	}
+	public void setModDate(Date modDate) {
+		this.modDate = modDate;
 	}
 }

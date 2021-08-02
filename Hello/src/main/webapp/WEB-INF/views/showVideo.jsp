@@ -22,8 +22,8 @@
 				</div>
 				
 				</div>
-				<div><input type="submit" id="test1" name ="lastTime" value ="0.0" onclick="stopYoutube()" ></div><br/>
-				<div><input  type = "hidden" id="test3" name ="studentID" value = "${list.studentID}">studentID : ${list.studentID}</div><br /> 
+				 <div><input type="submit" id="test1" name ="lastTime" value ="0.0" onclick="stopYoutube()" ></div><br/>
+				<div><input  type = "hidden" id="test3" name ="studentID" value = "${list.studentEmail}">studentEmail : ${list.studentEmail}</div><br /> 
 				<div><input type = "hidden" id="test2" name ="timer" value ="0.0" ></div><br />
 			</div>
 	 	</form>
@@ -36,16 +36,17 @@
      
       	<div type = "hidden" id="startTime">${list.lastTime}</div>
         <div type = "hidden" id="addTimer">${list.timer}</div> -->
-        
-        <c:forEach items="${playlist}" var ="p" varStatus="vs">
-        	<div id="videoID"> ${p.id}</div>
-			<div id="youtubeID" onclick="viewVideo('${p.youtubeID}', ${p.id},  ${p.start_s}, ${p.end_s})"> ${p.youtubeID}</div>
-			<span id="title"> ${p.title}  </span>
-			<span id="start_s"> ${p.start_s}</span>
-			<span id="end_s"> ${p.end_s}</span>
-			<div id="playlistID">${p.playlistID}</div></br>
-        </c:forEach>
-		
+        <div id="myPlaylist">
+        	<c:forEach items="${playlist}" var ="p" varStatus="vs">
+        		<div> NO. ${p.seq}</div>
+	        	<div id="videoID" style="display:none;">${p.id}</div>
+				<div id="youtubeID" >${p.youtubeID}</div>
+				<div id="title" onclick="viewVideo('${p.youtubeID}', ${p.id},  ${p.start_s}, ${p.end_s})"> ${p.title}  </div>
+				<div id="start_s" style="display:none;"> ${p.start_s}</div>
+				<div id="end_s" style="display:none;"> ${p.end_s}</div>
+				<div id="playlistID" style="display:none;">${p.playlistID}</div></br>
+        	</c:forEach>
+        </div>
 		<!--<c:forEach items="${videocheck}" var ="v" varStatus="vs">
         	<div id="videocheckId"> id : ${v.videoID}</div>
 			<div><input  type = "hidden" id="studentID" name ="studentID" value = "${v.studentID}"> studentID : ${v.studentID}</div><br />
@@ -56,6 +57,11 @@
         <form action = "attendance" method="post">
  			<button type = "submit"> 출석확인 </button>
  		</form>
+ 		
+ 	
+ 		
+ 			
+
         
 	
     <script type="text/javascript">
@@ -78,7 +84,7 @@
          
         var player;
         var youtubeID = document.getElementById("youtubeID"); 
-        var videoId = youtubeID.innerText; //youtubeID를 가져온다. wzAWI9h3q18 형태
+        var videoId = document.getElementById("youtubeID").innerText; //youtubeID를 가져온다. wzAWI9h3q18 형태
    		var lastVideo = document.getElementById("videoID").innerText; //videoID를 가져온다. 107 형태
         
         var start_s = document.getElementById("start_s").innerText;
@@ -104,7 +110,7 @@
         function viewVideo(id, videoID, startTime, endTime) { // 선택한 비디오 아이디를 가지고 플레이어 띄우기
         	//var studentID = document.getElementById("studentID").value;
         
-        	document.getElementById("test1").value = player.getCurrentTime();
+        	//document.getElementById("test1").value = player.getCurrentTime();
  			start_s = startTime;
  			
  			if (confirm("다른 영상으로 변경하시겠습니까? ") == true){    //확인
@@ -175,6 +181,7 @@
         
         
         function onYouTubeIframeAPIReady() {
+        	console.log("onYouTubeIframeAPIReady : " +videoId);
         	console.log(youtubeID.innerText);
             player = new YT.Player('gangnamStyleIframe', {
                 height: '315',            // <iframe> 태그 지정시 필요없음
@@ -211,7 +218,6 @@
 						watchedFlag = 1;
 					}
 					
-					console.log("ready howmanytime : " +howmanytime);
 					player.seekTo(start, true);
 			        player.pauseVideo();
 					
@@ -220,6 +226,7 @@
 					alert("playlist 추가 실패! : ", err.responseText);
 				}
 			});
+            console.log('onPlayerReady 마감');
             
         }
         
@@ -232,7 +239,7 @@
 				if(flag == 0 && Number(lastTime) < Number(document.getElementById("end_s").innerText) && watchedFlag == 1){ //아직 끝까지 안봤을 때만 물어보기! //처음볼때는 물어보지 않기
         			
         			if (confirm("이어서 시청하시겠습니까?") == true){    //확인
-        				//console.log("startTime  : " +lastTime);
+        				console.log(Number(lastTime) + " /// " + Number(document.getElementById("end_s").innerText));//지금보려는 영상이 아니고 예전에 보던 영상이네.,,,,, //stopFlag같은거 만들어서 하기
         				//player.seekTo(lastTime, true);
         				flag = 1;
         				player.playVideo();
@@ -258,7 +265,6 @@
         		starFlag = false;
         		timer = setInterval(function(){
         			if(!starFlag){
-        				console.log("time : " +time);
         				time++;
         	    		
         		       	min = Math.floor(time/60);
@@ -353,7 +359,7 @@
 	       	
        		}
           
- 
+        	document.getElementById("title").style.backgroundColor = "#9DD1F1";
             // 재생여부를 통계로 쌓는다.
             collectPlayCount(event.data);
         }
@@ -372,6 +378,34 @@
                 played = true;
                 console.log('statistics');
             }
+        }
+        
+        function endOfclass(id){
+        	console.log("id: " +id);
+
+       	 	document.getElementById("title").style.backgroundColor = "#9DD1F1";
+        	$.ajax({
+				'type' : "post",
+				'url' : "http://localhost:8080/myapp/endOfclass",
+				'data' : {
+							id : id,
+							studentId : studentID,
+							lastTime : player.getCurrentTime(),
+							timer : document.getElementById("test2").value,
+							playlistID : playlistID
+				},
+				
+				success : function(data){
+					//정보 잘 보냈다면 이것을 실행하라
+					//lastVideo = videoID;
+					console.log("success//exit: " +id);
+				}, 
+				error : function(err){
+					alert("p : ", err.responseText);
+				}
+			});
+        	 player.stopVideo();
+
         }
         
         

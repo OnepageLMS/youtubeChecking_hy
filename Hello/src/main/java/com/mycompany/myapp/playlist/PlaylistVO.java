@@ -10,6 +10,7 @@ public class PlaylistVO {
 		private double start_s;
 		private double end_s;
 		private int playlistID;
+		private int seq;
 		private Date regdate;
 		
 		public int getId() {
@@ -48,6 +49,14 @@ public class PlaylistVO {
 		public void setPlaylistID(int playlistID) {
 			this.playlistID = playlistID;
 		}
+		
+		public int getSeq() {
+			return seq;
+		}
+		public void setSeq(int seq) {
+			this.seq = seq;
+		}
+		
 		public Date getRegdate() {
 			return regdate;
 		}

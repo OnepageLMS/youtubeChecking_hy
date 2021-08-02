@@ -9,7 +9,7 @@
 	
 	<select id="getVideoList" resultType="PlaylistVO">
 		select * from Video where
-		playlistID=#{playlistID}
+		playlistID=#{playlistID} order by seq
 	</select>
 
 </mapper>

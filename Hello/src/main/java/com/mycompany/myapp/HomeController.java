@@ -39,6 +39,7 @@ import com.mycompany.myapp.googleLogin.GoogleOAuthRequest;
 import com.mycompany.myapp.googleLogin.GoogleOAuthResponse;
 import com.mycompany.myapp.playlist.PlaylistDAO;
 import com.mycompany.myapp.playlist.PlaylistService;
+import com.mycompany.myapp.playlist.PlaylistVO;
 import com.mycompany.myapp.playlistCheck.PlaylistCheckService;
 import com.mycompany.myapp.playlistCheck.PlaylistCheckVO;
 import com.mycompany.myapp.videocheck.VideoDAO;
@@ -81,35 +82,27 @@ public class HomeController {
 	 */
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String home(Locale locale, Model model) {
-		//String playlistID = request.getParameter("playlistID");
-		//if(playlistID == null) playlistID = "0";
 		
-		//int playlist = Integer.parseInt(playlistID);
-		//System.out.println("playlist : " + playlist)
-		logger.info("Welcome home! The client locale is {}.", locale);
+		/*logger.info("Welcome home! The client locale is {}.", locale);
 		
 		Date date = new Date();
 		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
 		
-		String formattedDate = dateFormat.format(date);
+		String formattedDate = dateFormat.format(date);*/
 		
 		VideoVO vo = new VideoVO();
+		PlaylistVO pvo = new PlaylistVO();
 		//System.out.println("test : " + videoService.getTime(103) + "  ");
 		model.addAttribute("list", videoService.getTime(103)); //여기에 내가 넣었네.. 바보인가..
 		
-		//System.out.println("videocheck : " + videoService.getTimeList(vo) + "  ");
-		//vo.setStudentID(Integer.toString(3));
-		//vo.setvideoID(10);
-		//System.out.println("videocheck : " + videoService.getTimeList() + "  ");
-		//model.addAttribute("videocheck", videoService.getTimeList());
 		
-		System.out.println(vo.getStudentID() + " " + vo.getvideoID());
-		model.addAttribute("playlist", playlistService.getVideoList(3));
+		
+		pvo.setPlaylistID(3);
+		//pvo.setStudentID(3);
+		model.addAttribute("playlist", playlistService.getVideoList(pvo));
 		
 		return "showVideo";
 	}
-	
-	
 	
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	public String google(RedirectAttributes rttr) {
@@ -163,7 +156,7 @@ public class HomeController {
 		// ==============================================================================
 		
 		VideoVO videovo = new VideoVO();
-		videovo.setStudentID(userInfo.get("email")); // 이 값을 db에 저장하고 싶다!!!!!
+		videovo.setStudentEmail(userInfo.get("email")); // 이 값을 db에 저장하고 싶다!!!!!
 		videovo.setLastTime(0.0);
 		videovo.setTimer(3.0);
 		
@@ -180,7 +173,7 @@ public class HomeController {
 		VideoVO loginvo = videoService.getTime(videovo.getID()); //로그인 체크하기 위해
 		//System.out.println("loginvo : " +loginvo.getStudentID());
 		//model.addAttribute("list", loginvo);
-		System.out.println("loginvo : " +loginvo.getStudentID());
+		System.out.println("loginvo : " +loginvo.getStudentEmail());
 		
 		
 		if (session.getAttribute("login") != null) { // 이미 로그인 되어있는지
@@ -253,7 +246,7 @@ public class HomeController {
 		VideoVO vo = new VideoVO();
 		
 		vo.setLastTime(lastTime);
-		vo.setStudentID(studentID);
+		vo.setStudentEmail(studentID);
 		vo.setvideoID(videoID);
 		vo.setTimer(timer);
 		vo.setplaylistID(playlistID);
@@ -282,10 +275,10 @@ public class HomeController {
 		VideoVO vo = new VideoVO();
 		
 		vo.setLastTime(lastTime);
-		vo.setStudentID(studentID);
+		vo.setStudentEmail(studentID);
 		vo.setvideoID(videoID);
 		vo.setTimer(timer);
-		vo.setWatch(watch);
+		vo.setWatched(watch);
 		
 		
 		if (videoService.updateWatch(vo) == 0) {
@@ -313,7 +306,7 @@ public class HomeController {
 		VideoVO vo = new VideoVO();
 		
 		
-		vo.setStudentID(studentID);
+		vo.setStudentEmail(studentID);
 		vo.setvideoID(videoID);
 		
 		if (videoService.getTime(vo) != null) {
@@ -354,7 +347,43 @@ public class HomeController {
 	}
 	
 	
+	@RequestMapping(value = "/endOfclass", method = RequestMethod.POST)
+	@ResponseBody
+	public String endOfclass(HttpServletRequest request) {
+		
+		String s_id = request.getParameter("id").trim();
+		if (s_id == null) {
+			s_id = "0";
+		}
+		int id = Integer.parseInt(request.getParameter("id"));
+		String studentID = request.getParameter("studentId");
+		double lastTime = Double.parseDouble(request.getParameter("lastTime"));
+		double timer = Double.parseDouble(request.getParameter("timer"));
+		int playlistID = Integer.parseInt(request.getParameter("playlistID"));
+		
+		VideoVO vo = new VideoVO();
+		//videoService.getTime(id);
+		vo.setStudentEmail(studentID);
+		vo.setvideoID(id);
+		vo.setLastTime(lastTime);
+		vo.setTimer(timer);
+		vo.setplaylistID(playlistID);
 	
+		System.out.println("studentID " + vo.getStudentEmail()+ " videoId" + vo.getvideoID());
+		System.out.println("lastTime" + vo.getLastTime()+ " timer" + vo.getTimer());
+		if (videoService.updateTime(vo) == 0) {
+			System.out.println("마지막 시간과 타이머 업데이트 실풰.. ");
+			videoService.insertTime(vo);
+
+		}
+		else {
+			System.out.println("마지막 시간과 타이머 업데이트 성공!!!");
+			//playlistcheckService.updateTotalWatched(pcvo);
+			
+		}
+			
+		return "classroom"; // 이것이 ajax 성공시 파라미터로 들어가는구만!!
+	}
 	
 	/*@RequestMapping(value = "/list/{studentID}", method = RequestMethod.GET)
 	public String detail(@PathVariable("studentID") int studentID, Model model) {

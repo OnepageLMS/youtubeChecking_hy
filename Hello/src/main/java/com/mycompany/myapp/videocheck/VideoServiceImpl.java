@@ -41,7 +41,6 @@ public class VideoServiceImpl implements VideoService {
 	
 	@Override
 	public VideoVO getTime(VideoVO vo) {
-		//System.out.println("db에 정보있는지 확인!?");
 		return videoDAO.getTime(vo);
 	}
 

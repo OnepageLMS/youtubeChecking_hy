@@ -31,9 +31,9 @@ public class PlaylistDAO {
 		return sqlSession.selectOne("Playlist.getVideo", playlistID);
 	}
 	
-	public List<PlaylistVO> getVideoList(int playlistID) {
+	public List<PlaylistVO> getVideoList(PlaylistVO vo) {
 		//System.out.println("dao!");
-		return sqlSession.selectList("Playlist.getVideoList", playlistID);
+		return sqlSession.selectList("Playlist.getVideoList", vo);
 	}
 //	public PlaylistVO getPlaylist (int id) {
 //		return sqlSession.selectOne("Playlist.getPlaylist", id);

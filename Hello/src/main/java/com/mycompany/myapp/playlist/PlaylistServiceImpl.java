@@ -32,7 +32,7 @@ public class PlaylistServiceImpl implements PlaylistService{
 //	}
 	
 	@Override
-	public List<PlaylistVO> getVideoList(int playlistID) {
-		return playlistDAO.getVideoList(playlistID);
+	public List<PlaylistVO> getVideoList(PlaylistVO vo) {
+		return playlistDAO.getVideoList(vo);
 	}
 }
