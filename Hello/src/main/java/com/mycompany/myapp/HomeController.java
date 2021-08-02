@@ -99,7 +99,8 @@ public class HomeController {
 		
 		pvo.setPlaylistID(3);
 		//pvo.setStudentID(3);
-		model.addAttribute("playlist", playlistService.getVideoList(pvo));
+		model.addAttribute("playlist", playlistService.getVideoList(pvo)); 
+		
 		
 		return "showVideo";
 	}
@@ -227,6 +228,28 @@ public class HomeController {
 		else
 			System.out.println("데이터 업데이트 성공!!!");
 		return "redirect:/";
+	}
+	
+	@RequestMapping(value = "/tothumbnail", method = RequestMethod.POST)
+	@ResponseBody
+	public List<PlaylistVO> toThumbnail(HttpServletRequest request) {
+		int playlistID = Integer.parseInt(request.getParameter("playlistID"));
+		
+		PlaylistVO pvo = new PlaylistVO();
+	
+		pvo.setPlaylistID(playlistID);
+		
+		if (playlistService.getVideoList(pvo) != null) {
+			System.out.println("플레이리스트에 뭐가 들어있긴 하네요!");
+			//videoService.insertTime(vo);
+
+		}
+		else {
+			System.out.println("플레이리스트 텅텅!");
+			
+		}
+			
+		return playlistService.getVideoList(pvo); // 이것이 ajax 성공시 파라미터로 들어가는구만!!
 	}
 	
 	@RequestMapping(value = "/changevideo", method = RequestMethod.POST)

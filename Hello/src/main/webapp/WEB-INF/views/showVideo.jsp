@@ -22,48 +22,66 @@
 				</div>
 				
 				</div>
-				 <div><input type="submit" id="test1" name ="lastTime" value ="0.0" onclick="stopYoutube()" ></div><br/>
-				<div><input  type = "hidden" id="test3" name ="studentID" value = "${list.studentEmail}">studentEmail : ${list.studentEmail}</div><br /> 
+
+				<div style="display:none;"><input  type = "hidden" id="test3" name ="studentID" value = "${list.studentEmail}">studentEmail : ${list.studentEmail}</div><br /> 
 				<div><input type = "hidden" id="test2" name ="timer" value ="0.0" ></div><br />
 			</div>
 	 	</form>
- 	
- 	
- 	<!--<div>
-	 		<h1>Hello world!<a href = "list/3">Click Here</a></h1>
-	 	</div>  
-        
-     
-      	<div type = "hidden" id="startTime">${list.lastTime}</div>
-        <div type = "hidden" id="addTimer">${list.timer}</div> -->
-        <div id="myPlaylist">
+ 		
+ 		<div id="myPlaylist" style="border: 1px solid gold; padding: 10px; width: 40%; height: auto; min-height: 100px; overflow: auto;" >
         	<c:forEach items="${playlist}" var ="p" varStatus="vs">
-        		<div> NO. ${p.seq}</div>
-	        	<div id="videoID" style="display:none;">${p.id}</div>
-				<div id="youtubeID" >${p.youtubeID}</div>
-				<div id="title" onclick="viewVideo('${p.youtubeID}', ${p.id},  ${p.start_s}, ${p.end_s})"> ${p.title}  </div>
-				<div id="start_s" style="display:none;"> ${p.start_s}</div>
-				<div id="end_s" style="display:none;"> ${p.end_s}</div>
-				<div id="playlistID" style="display:none;">${p.playlistID}</div></br>
+
+        		<div id="inmyPlaylist">
+		        	<div id="videoID" style="display:none;">${p.id}</div>
+					<div id="youtubeID" style="display:none;">${p.youtubeID}</div>
+					<div id="get_view"></div>
+					<div id="title" onclick="viewVideo('${p.youtubeID}', ${p.id},  ${p.start_s}, ${p.end_s})" style="display:none;"> ${p.title}  </div>
+					<div id="start_s" style="display:none;">${p.start_s}</div>
+					<div id="end_s" style="display:none;" >${p.end_s}</div>
+					<div id="playlistID" style="display:none;">${p.playlistID}</div></br>
+        		</div>
         	</c:forEach>
         </div>
-		<!--<c:forEach items="${videocheck}" var ="v" varStatus="vs">
-        	<div id="videocheckId"> id : ${v.videoID}</div>
-			<div><input  type = "hidden" id="studentID" name ="studentID" value = "${v.studentID}"> studentID : ${v.studentID}</div><br />
-			<div type = "hidden" id="startTime">${v.lastTime}</div>
-        	<div type = "hidden" id="addTimer">${v.timer}</div>
-        </c:forEach>-->
         
-        <form action = "attendance" method="post">
+         <form action = "attendance" method="post">
  			<button type = "submit"> 출석확인 </button>
  		</form>
  		
- 	
  		
- 			
-
-        
-	
+ 	<script>
+	 	
+	 	$(function(){
+	 		myThumbnail();
+	 		myAttendance();
+	 	});
+	 	
+	 	function myThumbnail(){
+	 		$.ajax({
+				'type' : "post",
+				'url' : "http://localhost:8080/myapp/tothumbnail",
+				'data' : {
+							playlistID : document.getElementById("playlistID").innerText
+				},
+				success : function(data){
+					for(var i=0; i<data.length; i++){
+				 		var thumbnail = '<img src="https://img.youtube.com/vi/' + data[i].youtubeID + '/1.jpg">';
+				 		$("#get_view").append(thumbnail + '<div id="title" onclick="viewVideo(\'' +data[i].youtubeID.toString() + '\'' + ',' + data[i].id + ',' + data[i].start_s + ',' + data[i].end_s + ')" >' +data[i].title+ '</div>' );
+				 		//$("#get_view").remove();
+				 		//$("#get_view").append(thumbnail);
+				 		console.log(thumbnail);
+					}
+				}, 
+				error : function(err){
+					alert("playlist thumbnail 언제 가져올래? : ", err.responseText);
+				}
+			}); 
+	 	}
+	 	
+	 	//function
+	 	
+ 	</script>
+ 		
+ 		
     <script type="text/javascript">
     	//alert(${list.lastTime});
         /**
@@ -109,7 +127,7 @@
         
         function viewVideo(id, videoID, startTime, endTime) { // 선택한 비디오 아이디를 가지고 플레이어 띄우기
         	//var studentID = document.getElementById("studentID").value;
-        
+        	//console.log("오긴해");
         	//document.getElementById("test1").value = player.getCurrentTime();
  			start_s = startTime;
  			
@@ -307,7 +325,7 @@
         	
         	/*영상이 종료되었을 때 타이머 멈추도록, 영상을 끝까지 본 경우! (영상의 총 길이가 마지막으로 본 시간으로 들어간다.)*/
         	if(event.data == 0){
-        		
+        		//document.getElementById("inmyPlaylist").style.backgroundColor = "#9DD1F1";
         		$.ajax({
 					'type' : "post",
 					'url' : "http://localhost:8080/myapp/changewatch",
@@ -359,7 +377,7 @@
 	       	
        		}
           
-        	document.getElementById("title").style.backgroundColor = "#9DD1F1";
+        	
             // 재생여부를 통계로 쌓는다.
             collectPlayCount(event.data);
         }
@@ -383,7 +401,7 @@
         function endOfclass(id){
         	console.log("id: " +id);
 
-       	 	document.getElementById("title").style.backgroundColor = "#9DD1F1";
+       	 	//document.getElementById("title[1]").style.backgroundColor = "#9DD1F1";
         	$.ajax({
 				'type' : "post",
 				'url' : "http://localhost:8080/myapp/endOfclass",
@@ -411,5 +429,6 @@
         
         
     </script>
+    
 </body>
 </html>
