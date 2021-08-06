@@ -298,10 +298,10 @@ public class HomeController {
 		vo.setStudentEmail(studentID);
 		vo.setvideoID(videoID);
 		vo.setTimer(timer);
-		vo.setplaylistID(playlistID);
+		vo.setvideocheckPlaylistID(playlistID);
 		
 		System.out.println("timer 저장잘됨? " + vo.getTimer());
-		System.out.println("playlist id : " +vo.getplaylistID());
+		System.out.println("playlist id : " +vo.getvideocheckPlaylistID());
 		
 		if (videoService.updateTime(vo) == 0) {
 			System.out.println("데이터 업데이트 실패 ");
@@ -418,7 +418,7 @@ public class HomeController {
 		vo.setvideoID(id);
 		vo.setLastTime(lastTime);
 		vo.setTimer(timer);
-		vo.setplaylistID(playlistID);
+		vo.setvideocheckPlaylistID(playlistID);
 	
 		System.out.println("studentID " + vo.getStudentEmail()+ " videoId" + vo.getvideoID());
 		System.out.println("lastTime" + vo.getLastTime()+ " timer" + vo.getTimer());

@@ -16,36 +16,7 @@
 
     <div id="gangnamStyleIframe"></div>
  	
-	 <!--  	<form action = "updateok" method="post"> 
-		 	<div id='box' class="box">
-				<div id='timerBox' class="timerBox">
-					<div id="time" class="time">00:00:00</div>
-				</div>
-				
-				</div>
-
-				<div style="display:none;"><input  type = "hidden" id="test3" name ="studentID" value = "${list.studentEmail}">studentEmail : ${list.studentEmail}</div><br /> 
-				<div><input type = "hidden" id="test2" name ="timer" value ="0.0" ></div><br />
-			</div>
-	 	</form>-->
- 		
- 		<!-- <div id="myPlaylist" style="border: 1px solid gold; padding: 10px; width: 40%; height: auto; min-height: 100px; overflow: auto;" >
- 		
-        	<c:forEach items="${playlist}" var ="p" varStatus="vs">
-        		<div id="inmyPlaylist">
-		        	<div id="videoID" name="videoID" style="display:none;" >${p.id}</div>
-					<div id="youtubeID" style="display:none;">${p.youtubeID}</div>
-					<div id="get_view" ></div>
-					<div id="title" onclick="viewVideo('${p.youtubeID}', ${p.id}, ${p.start_s}, ${p.end_s})" style="display:none;"> ${p.title} </div>
-					<div id="start_s" style="display:none;">${p.start_s}</div>
-					<div id="end_s" style="display:none;" >${p.end_s}</div>
-					<div id="playlistID" style="display:none;">${p.playlistID}</div></br>
-					<div class="lastTime"><input  type = "hidden" name ="lastTime" >${p.lastTime}</div>
-					<div class="timer"><input  type = "hidden" name ="timer" >${p.timer}</div>
-        		</div>
-        	</c:forEach>
-        	
-        </div>-->
+	 
         
         <div id='timerBox' class="timerBox">
 			<div id="time" class="time">00:00:00</div>
@@ -105,7 +76,7 @@
 	 		
 	 		<c:forEach items="${playlist}" var ="p" varStatus="vs">
 	 			arr.push({id : "${p.id}", youtubeID : "${p.youtubeID}", title : "${p.title}", 
-	 				start_s : "${p.start_s}", end_s : "${p.end_s}", playlistID : "${p.playlistID}", duration: "${p.duration}",
+	 				start_s : "${p.start_s}", end_s : "${p.end_s}", playlistID : "${p.playlistID}", duration: "${p.duration}", seq : "${p.seq}",
 	 				lastTime : "${p.lastTime}", timer : "${p.timer}"});
 	 		</c:forEach>
 	 		
@@ -118,7 +89,7 @@
 	 		
 	 		for(var i=0; i<${fn:length(playlist)}; i++){
 	 			var thumbnail = '<img src="https://img.youtube.com/vi/' + arr[i].youtubeID + '/1.jpg">';
-	 			$("#get_view").append(thumbnail + '<div onclick="viewVideo(\'' +arr[i].youtubeID.toString() + '\'' + ',' + arr[i].id + ',' + arr[i].start_s + ',' + arr[i].end_s +  ',' + i + ')" >' +arr[i].title+ '</div><div>' +arr[i].duration+ '</div>' );
+	 			$("#get_view").append(thumbnail + '<div onclick="viewVideo(\'' +arr[i].youtubeID.toString() + '\'' + ',' + arr[i].id + ',' + arr[i].start_s + ',' + arr[i].end_s +  ',' + i + ')" >' +arr[i].title+ '</div><div>' +arr[i].duration+ " " +arr[i].seq +'</div>' );
 	 		}
 	 	}
 	 	
@@ -153,8 +124,8 @@
 						//console.log("now: " +arr[ori_index].timer);
 					}, 
 					error : function(err){
-						//console.log("timer : " + (db_timer + parseInt(arr[ori_index].timer)));
-						//console.log("videoID :" +videoID);
+						console.log("timer : " + (db_timer + parseInt(arr[ori_index].timer)));
+						console.log("videoID :" +videoID);
 						alert("playlist 추가 실패! : ", err.responseText);
 					}
 				}); //보던 영상 정보 저장
