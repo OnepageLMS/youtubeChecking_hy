@@ -11,6 +11,9 @@ public class PlaylistVO {
 		private double end_s;
 		private int playlistID;
 		private int seq;
+		private double lastTime;
+		private double timer;
+		private float duration;
 		private Date regdate;
 		
 		public int getId() {
@@ -55,6 +58,27 @@ public class PlaylistVO {
 		}
 		public void setSeq(int seq) {
 			this.seq = seq;
+		}
+		
+		public double getlastTime(){
+			return lastTime;
+		}
+		public void setlastTime(double lastTime) {
+			this.lastTime = lastTime;
+		}
+		
+		public double getTimer(){
+			return timer;
+		}
+		public void setTimer(double timer) {
+			this.timer = timer;
+		}
+		
+		public float getDuration(){
+			return duration;
+		}
+		public void setDuration(float duration) {
+			this.duration = duration;
 		}
 		
 		public Date getRegdate() {

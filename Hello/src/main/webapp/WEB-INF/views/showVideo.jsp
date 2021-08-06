@@ -29,32 +29,39 @@
 	 	</form>
  		
  		<div id="myPlaylist" style="border: 1px solid gold; padding: 10px; width: 40%; height: auto; min-height: 100px; overflow: auto;" >
+ 		
         	<c:forEach items="${playlist}" var ="p" varStatus="vs">
-
         		<div id="inmyPlaylist">
-		        	<div id="videoID" style="display:none;">${p.id}</div>
+		        	<div id="videoID" name="videoID" style="display:none;" >${p.id}</div>
 					<div id="youtubeID" style="display:none;">${p.youtubeID}</div>
-					<div id="get_view"></div>
-					<div id="title" onclick="viewVideo('${p.youtubeID}', ${p.id}, ${p.start_s}, ${p.end_s})" style="display:none;"> ${p.title}  </div>
+					<div id="get_view" ></div>
+					<div id="title" onclick="viewVideo('${p.youtubeID}', ${p.id}, ${p.start_s}, ${p.end_s})" style="display:none;"> ${p.title} </div>
 					<div id="start_s" style="display:none;">${p.start_s}</div>
 					<div id="end_s" style="display:none;" >${p.end_s}</div>
 					<div id="playlistID" style="display:none;">${p.playlistID}</div></br>
+					<div lastTime=""></div>
         		</div>
         	</c:forEach>
+        	
         </div>
         
          <form action = "attendance" method="post">
  			<button type = "submit"> 출석확인 </button>
  		</form>
  		
- 		
  	<script>
-	 	
+ 		//document.getElementById("end_s").innerText = ;
+ 		//div id에 배열로 접근하기
+ 		//var videoID = document.getElementsByClassName("videoID")
+ 		
+ 		//while()
 	 	$(function(){
+	 		console.log(document.getElementsByClassName("videoID").innerText);
 	 		myThumbnail();
 	 	});
 	 	
 	 	function myThumbnail(){
+	 		console.log("myThumbnail");
 	 		$.ajax({ //thumbnail을 위해 실행하는 ajax
 				'type' : "post",
 				'url' : "http://localhost:8080/myapp/tothumbnail",
@@ -97,14 +104,16 @@
 				error : function(err){
 					alert("playlist thumbnail 언제 가져올래? : ", err.responseText);
 				}
-			}); 
+			});
+
 	 	}
 	 	
 	 	
  	</script>
- 		
+    
  		
     <script type="text/javascript">
+    	
     	//alert(${list.lastTime});
         /**
          * Youtube API 로드 
@@ -156,6 +165,7 @@
  			if (confirm("다른 영상으로 변경하시겠습니까? ") == true){    //확인
  				flag = 0;
  	 			time = 0;
+ 	 			//clearInterval(timer); //현재 재생중인 timer를 중지하지 않고, 새로운 youtube를 실행해서 timer 두개가 실행되는 현상으로, 새로운 유튜브를 실행할 때 타이머 중지!
 				//이 전에 db에 lastTime, timer 저장하기 ajax를 써봅시다!
 				
 				$.ajax({
@@ -176,6 +186,7 @@
 						alert("playlist 추가 실패! : ", err.responseText);
 					}
 				}); //보던 영상 정보 저장
+				//보던 영상에 대해 start_s, end_s 업데이트 해두기
 				
 				//앞으로 실행할 영상에 대한 정보를 불러온다. 이미 실행하던 영상이면 시작시간을 start_s가 아닌 lastTime으로 설정하기
 				$.ajax({
@@ -215,6 +226,8 @@
     			return;
 
     		}
+ 			clearInterval(timer); //현재 재생중인 timer를 중지하지 않고, 새로운 youtube를 실행해서 timer 두개가 실행되는 현상으로, 새로운 유튜브를 실행할 때 타이머 중지!
+			starFlag = true;
  			//console.log("startTime2 : " +startTime);
  			//player.loadVideoById(id, startTime, "large");
  		}
@@ -275,12 +288,9 @@
         	
         	/*영상이 시작하기 전에 이전에 봤던 곳부터 이어봤는지 물어보도록!*/
         	if(event.data == -1) {
-        		
-				if(flag == 0 && Number(lastTime) < Number(document.getElementById("end_s").innerText) && watchedFlag == 1){ //아직 끝까지 안봤을 때만 물어보기! //처음볼때는 물어보지 않기
+				if(flag == 0  && watchedFlag != 1){ //아직 끝까지 안봤을 때만 물어보기! //처음볼때는 물어보지 않기
         			
-        			if (confirm("이어서 시청하시겠습니까?") == true){    //확인
-        				console.log(Number(lastTime) + " /// " + Number(document.getElementById("end_s").innerText));//지금보려는 영상이 아니고 예전에 보던 영상이네.,,,,, //stopFlag같은거 만들어서 하기
-        				//player.seekTo(lastTime, true);
+        			if (confirm("이어서 시청하시겠습니까?") == true){    
         				flag = 1;
         				player.playVideo();
             		}
@@ -306,7 +316,7 @@
         		starFlag = false;
         		timer = setInterval(function(){
         			if(!starFlag){
-        				time++;
+        				
         	    		
         		       	min = Math.floor(time/60);
         		        hour = Math.floor(min/60);
@@ -330,7 +340,7 @@
         				//console.log("timer : " + timer);
         		        document.getElementById("time").innerHTML = th + ":" + tm + ":" + ts;
         		        document.getElementById("test2").value = time + parseInt(howmanytime);
-        		        
+        		        time++;
         			}
     		      }, 1000);
         		
@@ -452,6 +462,7 @@
         
         
     </script>
+    
     
 </body>
 </html>

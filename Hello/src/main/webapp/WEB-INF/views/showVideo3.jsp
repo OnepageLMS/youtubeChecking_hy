@@ -16,58 +16,48 @@
 
     <div id="gangnamStyleIframe"></div>
  	
-	 	<form action = "updateok" method="post"> 
+	 <!--  	<form action = "updateok" method="post"> 
 		 	<div id='box' class="box">
 				<div id='timerBox' class="timerBox">
 					<div id="time" class="time">00:00:00</div>
-				<div style="display:none;"><input  type = "hidden" id="test3" name ="studentEmail" value = "${list.studentEmail}">studentEmail : ${list.studentEmail}</div>
-				<div><input type = "hidden" id="test2" name ="timer" value ="0.0" ></div>
 				</div>
+				
+				</div>
+
+				<div style="display:none;"><input  type = "hidden" id="test3" name ="studentID" value = "${list.studentEmail}">studentEmail : ${list.studentEmail}</div><br /> 
+				<div><input type = "hidden" id="test2" name ="timer" value ="0.0" ></div><br />
 			</div>
+	 	</form>-->
  		
- 		<div id="myPlaylist" style="border: 1px solid gold; padding: 10px; width: 40%; height: auto; min-height: 100px; overflow: auto;" >
-        	
-        	<c:forEach items="${playlist}" var ="p" varStatus="vs"> 
-        		<div id="inmyPlaylist" style="display:none;"> 
-		        	<div class="videoID" style="display:none;" >${p.id}</div>
-					<div class="youtubeID" style="display:none;" ><input  type = "hidden" name ="videoID" >${p.youtubeID}</div>
-					<div class="title" onclick="viewVideo('${p.youtubeID}', ${p.id}, ${p.start_s}, ${p.end_s})" style="display:none;"> ${p.title} </div>
-					<div class="start_s" style="display:none;">${p.start_s}</div>
-					<div class="end_s" style="display:none;" >${p.end_s}</div>
-					<div class="playlistID" style="display:none;"><input  type = "hidden" name ="playlistID" >${p.playlistID}</div></br>
-					<div id="length" style="display:none;">${fn:length(playlist)}</div>
+ 		<!-- <div id="myPlaylist" style="border: 1px solid gold; padding: 10px; width: 40%; height: auto; min-height: 100px; overflow: auto;" >
+ 		
+        	<c:forEach items="${playlist}" var ="p" varStatus="vs">
+        		<div id="inmyPlaylist">
+		        	<div id="videoID" name="videoID" style="display:none;" >${p.id}</div>
+					<div id="youtubeID" style="display:none;">${p.youtubeID}</div>
+					<div id="get_view" ></div>
+					<div id="title" onclick="viewVideo('${p.youtubeID}', ${p.id}, ${p.start_s}, ${p.end_s})" style="display:none;"> ${p.title} </div>
+					<div id="start_s" style="display:none;">${p.start_s}</div>
+					<div id="end_s" style="display:none;" >${p.end_s}</div>
+					<div id="playlistID" style="display:none;">${p.playlistID}</div></br>
 					<div class="lastTime"><input  type = "hidden" name ="lastTime" >${p.lastTime}</div>
 					<div class="timer"><input  type = "hidden" name ="timer" >${p.timer}</div>
         		</div>
         	</c:forEach>
         	
-        	<div id="get_view"></div>
-        	<div id="store"></div>
-        	<div><input type = "hidden" name ="watched" >0</div>
+        </div>-->
+        
+        <div id='timerBox' class="timerBox">
+			<div id="time" class="time">00:00:00</div>
+		</div>
+			
+        <div id="myPlaylist" style="border: 1px solid gold; padding: 10px; width: 40%; height: auto; min-height: 100px; overflow: auto;" >
+        	<div id="get_view" ></div>
         </div>
-        	<button type="submit"> 나가기 </button>
-        </form>
         
          <form action = "attendance" method="post">
  			<button type = "submit"> 출석확인 </button>
  		</form>
- 		
- 	<script>
- 		//document.getElementById("end_s").innerText = ;
- 		//div id에 배열로 접근하기
-	 	$(function(){ //처음 화면로딩할 때 
-	 		var thumbnail ;
-	 		for (var i=0; i<document.getElementById("length").innerText; i++){
-	 			console.log("i : " + i);
-	 			thumbnail = '<img src="https://img.youtube.com/vi/' + document.getElementsByClassName("youtubeID")[i].innerText + '/1.jpg">';
-	 			$("#get_view").append(thumbnail + '<div id="title" onclick="viewVideo(\'' +document.getElementsByClassName("youtubeID")[i].innerText + '\'' + ',' + document.getElementsByClassName("videoID")[i].innerText + ',' + document.getElementsByClassName("start_s")[i].innerText+ ',' + document.getElementsByClassName("end_s")[i].innerText + ',' + i +')" >' +document.getElementsByClassName("title")[i].innerText+ '</div>' );
-	 		}
-	 		
-	 	});
-	 	
-	 	
- 	</script>
-    
  		
     <script type="text/javascript">
     	
@@ -89,21 +79,7 @@
          */
          
         var player;
-        var ori_index = 0;
-        var youtubeID = document.getElementsByClassName("youtubeID"); 
-        var videoId = document.getElementsByClassName("youtubeID")[0].innerText; //youtubeID를 가져온다. wzAWI9h3q18 형태
-   		var lastVideo = document.getElementsByClassName("videoID")[0].innerText; //videoID를 가져온다. 107 형태
-        
-        var start_s = document.getElementsByClassName("start_s").innerText;
-        var addTimer = document.getElementsByClassName("addTimer");
-        var studentID = document.getElementsByClassName("test3").value;
-        var playlistID = document.getElementsByClassName("playlistID").innerText;
-        var lastTime;
-        
-        
-        var db_lastTime;
-        var db_timer;
-        var db_ID;
+        var studentEmail = ${list.studentEmail};
         
         var playerState;
         var time = 0;
@@ -112,73 +88,90 @@
 		var hour = 0;
 		var min = 0;
 	    var sec = 0;
-		var timer;
+		var db_timer;
 		var flag = 0;
+		var timer;
 		
 		var howmanytime = 0;
 		var watchedFlag = 0;
 		
-        
+		var arr = new Array();
+		var lastVideo;
+		var playlistID;
+		var ori_index =0;
+ 		
+	 	$(function(){ //db로부터 정보 불러오기!
+	 		//console.log(document.getElementsByClassName("videoID").innerText);
+	 		
+	 		<c:forEach items="${playlist}" var ="p" varStatus="vs">
+	 			arr.push({id : "${p.id}", youtubeID : "${p.youtubeID}", title : "${p.title}", 
+	 				start_s : "${p.start_s}", end_s : "${p.end_s}", playlistID : "${p.playlistID}", duration: "${p.duration}",
+	 				lastTime : "${p.lastTime}", timer : "${p.timer}"});
+	 		</c:forEach>
+	 		
+	 		lastVideo = arr[0].id;
+	 		myThumbnail();
+	 	});
+	 	
+	 	
+	 	function myThumbnail(){
+	 		
+	 		for(var i=0; i<${fn:length(playlist)}; i++){
+	 			var thumbnail = '<img src="https://img.youtube.com/vi/' + arr[i].youtubeID + '/1.jpg">';
+	 			$("#get_view").append(thumbnail + '<div onclick="viewVideo(\'' +arr[i].youtubeID.toString() + '\'' + ',' + arr[i].id + ',' + arr[i].start_s + ',' + arr[i].end_s +  ',' + i + ')" >' +arr[i].title+ '</div><div>' +arr[i].duration+ '</div>' );
+	 		}
+	 	}
+	 	
+	 	
         function viewVideo(videoID, id, startTime, endTime, index) { // 선택한 비디오 아이디를 가지고 플레이어 띄우기
  			start_s = startTime;
- 			//console.log("index : " +index);
- 			
- 			
+ 			//console.log("timer : " +time + " parseInt(arr[index].timer) : " +(arr[index].timer));
+ 			//console.log("timer : " + (db_timer + parseInt(arr[ori_index].timer)));
  			if (confirm("다른 영상으로 변경하시겠습니까? ") == true){    //확인
  				flag = 0;
  	 			time = 0;
-				
  	 			
- 	 			document.getElementsByClassName("lastTime")[ori_index].innerText = player.getCurrentTime();
- 	 			db_lastTime = document.getElementsByClassName("lastTime")[ori_index].innerText;
- 	 			document.getElementsByClassName("timer")[ori_index].innerText = document.getElementById("test2").value;
-				db_timer = document.getElementsByClassName("timer")[ori_index].innerText;
-				db_ID = id;
-				
- 	 			ori_index = index;
- 	 			howmanytime = document.getElementsByClassName("timer")[ori_index].innerText;
- 	 			
- 	 			
- 	 			if(parseInt(document.getElementsByClassName("lastTime")[index].innerText) > 0.0){
- 	 				startTime = parseInt(document.getElementsByClassName("lastTime")[index].innerText);
- 	 				watchedFlag = 1;
- 	 			}
- 	 			
- 	 			player.loadVideoById({'videoId': videoID,
-		               'startSeconds': startTime,
-		               'endSeconds': endTime,
-		               'suggestedQuality': 'default'});
-				
-				//앞으로 실행할 영상에 대한 정보를 불러온다. 이미 실행하던 영상이면 시작시간을 start_s가 아닌 lastTime으로 설정하기
-			/*	$.ajax({
+ 	 			clearInterval(timer); //현재 재생중인 timer를 중지하지 않고, 새로운 youtube를 실행해서 timer 두개가 실행되는 현상으로, 새로운 유튜브를 실행할 때 타이머 중지!
+				//이 전에 db에 lastTime, timer 저장하기 ajax를 써봅시다!
+				console.log("db_timer:" +db_timer);
+				$.ajax({
 					'type' : "post",
-					'url' : "http://localhost:8080/myapp/videocheck",
+					'url' : "http://localhost:8080/myapp/changevideo",
 					'data' : {
-								studentID : studentID, //지금은 임의로 3으로 설정했지만, 나중에 로그인하면 studentID에 이메일이 들어감
-								videoID : videoID
+								lastTime : player.getCurrentTime(),
+								studentID : studentEmail,
+								videoID : lastVideo,
+								playlistID : arr[ori_index].playlistID,
+								timer : db_timer + parseInt(arr[ori_index].timer)
 					},
 					success : function(data){
-						//data를 리턴 받잖수! 여기의 lastTime을 startTime으로 지정해주어야함.
-						if(Object.keys(data) != -1){
-							startTime = Object.keys(data); //함수의 파라미터로 받은 startTime에 대해서 사용자가 이전에 들었던 마지막 시간으로 설정
-							lastTime = Object.keys(data); //confirm문에서 이어서 시청할 때 사용하려고 했는데 별필요 없을듯!
-							howmanytime = Object.values(data); 
-							watchedFlag = 1;
-						}
-						
-						flag = 0;
- 	 					time = 0;
-						player.loadVideoById({'videoId': id,
-				               'startSeconds': startTime,
-				               'endSeconds': endTime,
-				               'suggestedQuality': 'default'})
-				               
+						//정보 잘 보냈다면 이것을 실행하라
+						console.log("now: " +arr[ori_index].timer);
+						lastVideo = id; // **
+						ori_index = index;
+						//arr[ori_index].timer = db_timer + parseInt(arr[ori_index].timer);
+						//console.log("now: " +arr[ori_index].timer);
 					}, 
 					error : function(err){
+						//console.log("timer : " + (db_timer + parseInt(arr[ori_index].timer)));
+						//console.log("videoID :" +videoID);
 						alert("playlist 추가 실패! : ", err.responseText);
 					}
-				});*/
- 				
+				}); //보던 영상 정보 저장
+				//보던 영상에 대해 start_s, end_s 업데이트 해두기
+				
+				if(arr[index].lastTime >= 0.0){ //이미 보던 영상이다.
+					startTime = arr[index].lastTime;
+					howmanytime = arr[index].timer;
+					watchedFag = 1;
+				}
+				
+				player.loadVideoById({'videoId': videoID,
+		               'startSeconds': startTime,
+		               'endSeconds': endTime,
+		               'suggestedQuality': 'default'})
+		               
+				
 				//이 영상을 처음보는 것이 아니라면 이전에 보던 시간부터 startTime을 설정해두기
  				
     		}
@@ -187,36 +180,16 @@
     			return;
 
     		}
- 			clearInterval(timer); //현재 재생중인 timer를 중지하지 않고, 새로운 youtube를 실행해서 timer 두개가 실행되는 현상으로, 새로운 유튜브를 실행할 때 타이머 중지!
-			starFlag = true;
  		}
         
-        function db_store(){
-        	$.ajax({
-				'type' : "post",
-				'url' : "http://localhost:8080/myapp/store",
-				'data' : {
-							lastTime : db_lastTime, //지금은 임의로 3으로 설정했지만, 나중에 로그인하면 studentID에 이메일이 들어감
-							timer : db_timer,
-							studentID : studentID,
-							videoID : db_ID
-				},
-				success : function(data){
-					alert("성공!")
-				}, 
-				error : function(err){
-					alert("기냥 실패 ");
-				}
-			});
-        }
         
         function onYouTubeIframeAPIReady() {
-        	console.log("onYouTubeIframeAPIReady : " +videoId);
-        	console.log(youtubeID.innerText);
+        	//console.log("onYouTubeIframeAPIReady : " +videoId);
+        	//console.log(youtubeID.innerText);
             player = new YT.Player('gangnamStyleIframe', {
                 height: '315',            // <iframe> 태그 지정시 필요없음
                 width: '560',             // <iframe> 태그 지정시 필요없음
-                videoId: videoId,
+                videoId: arr[0].youtubeID,
                 playerVars: {             // <iframe> 태그 지정시 필요없음
                     controls: '2'
                 },
@@ -236,13 +209,13 @@
 				'type' : "post",
 				'url' : "http://localhost:8080/myapp/videocheck",
 				'data' : {
-							studentID : studentID, //학생ID(email)
-							videoID : lastVideo //현재 재생중인 (플레이리스트 첫번째 영상의 ) id
+							studentID : studentEmail, //학생ID(email)
+							videoID : arr[0].id //현재 재생중인 (플레이리스트 첫번째 영상의 ) id
 				},
 				success : function(data){
 					
 					if(Object.keys(data) != -1){ //보던 영상이라면
-						//lastTime = Object.keys(data); //confirm문에서 이어서 시청할 때 사용하려고 했는데 별필요 없을듯!
+						lastTime = Object.keys(data); //confirm문에서 이어서 시청할 때 사용하려고 했는데 별필요 없을듯!
 						start = Object.keys(data);
 						howmanytime = Object.values(data);
 						watchedFlag = 1;
@@ -287,6 +260,9 @@
         	
         	/*영상이 실행될 때 타이머 실행하도록!*/
         	if(event.data == 1) {
+        		
+        		//console.log(event.data);
+        		
         		starFlag = false;
         		timer = setInterval(function(){
         			if(!starFlag){
@@ -313,8 +289,9 @@
         				
         				//console.log("timer : " + timer);
         		        document.getElementById("time").innerHTML = th + ":" + tm + ":" + ts;
-        		        document.getElementById("test2").value = time + parseInt(howmanytime);
-        		        //document.getElementsByClassName("timer")[ori_index].innerText = time + parseInt(document.getElementsByClassName("timer")[ori_index].innerText);
+        		        //document.getElementById("test2").value = time + parseInt(howmanytime);
+        		        db_timer = time;
+        		        console.log(db_timer);
         		        time++;
         			}
     		      }, 1000);

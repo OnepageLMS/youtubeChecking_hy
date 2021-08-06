@@ -8,8 +8,8 @@
 	</insert>
 	
 	<select id="getVideoList" resultType="PlaylistVO">
-		select * from Video where
-		playlistID=#{playlistID} order by seq
+		select * from Video, videocheck
+		where Video.playlistID=#{playlistID} AND Video.playlistID = videocheck.playlistID AND Video.id = videocheck.videoID order by Video.seq
 	</select>
 
 </mapper>

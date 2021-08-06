@@ -102,7 +102,7 @@ public class HomeController {
 		model.addAttribute("playlist", playlistService.getVideoList(pvo)); 
 		
 		
-		return "showVideo";
+		return "showVideo3";
 	}
 	
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
@@ -280,17 +280,17 @@ public class HomeController {
 	
 	@RequestMapping(value = "/changevideo", method = RequestMethod.POST)
 	@ResponseBody
-	public String changeVideoOK(HttpServletRequest request) {
+	public List<VideoVO> changeVideoOK(HttpServletRequest request) {
 		double lastTime = Double.parseDouble(request.getParameter("lastTime"));
-		System.out.println("lastTime : " +lastTime);
+		//System.out.println("lastTime : " +lastTime);
 		double timer = Double.parseDouble(request.getParameter("timer"));
-		System.out.println("timer : " +timer);
+		//System.out.println("timer : " +timer);
 		String studentID = request.getParameter("studentID");
-		System.out.println("studentID : " +studentID);
+		//System.out.println("studentID : " +studentID);
 		int videoID = Integer.parseInt(request.getParameter("videoID"));
-		System.out.println("videoID : " +videoID);
+		//System.out.println("videoID : " +videoID);
 		int playlistID = Integer.parseInt(request.getParameter("playlistID"));
-		System.out.println("videoID : " +playlistID);
+		//System.out.println("videoID : " +playlistID);
 		
 		VideoVO vo = new VideoVO();
 		
@@ -300,6 +300,7 @@ public class HomeController {
 		vo.setTimer(timer);
 		vo.setplaylistID(playlistID);
 		
+		System.out.println("timer 저장잘됨? " + vo.getTimer());
 		System.out.println("playlist id : " +vo.getplaylistID());
 		
 		if (videoService.updateTime(vo) == 0) {
@@ -309,7 +310,8 @@ public class HomeController {
 		}
 		else
 			System.out.println("데이터 업데이트 성공!!!");
-		return "redirect:/"; // 이것이 ajax 성공시 파라미터로 들어가는구만!!
+		
+		return videoService.getTimeList();
 	}
 	
 	@RequestMapping(value = "/changewatch", method = RequestMethod.POST)
