@@ -21,8 +21,10 @@
         <div id='timerBox' class="timerBox">
 			<div id="time" class="time">00:00:00</div>
 		</div>
-			
+		
+		<div id="total_runningtime"></div>
         <div id="myPlaylist" style="border: 1px solid gold; padding: 10px; width: 40%; height: auto; min-height: 100px; overflow: auto;" >
+        	
         	<div id="get_view" ></div>
         </div>
         
@@ -87,10 +89,57 @@
 	 	
 	 	function myThumbnail(){
 	 		
+	 		var total_runningtime = 0;
+	 		
 	 		for(var i=0; i<${fn:length(playlist)}; i++){
+	 			
+	 			var show_min = Math.floor((parseInt(arr[i].end_s) - parseInt(arr[i].start_s))/60);
+		        var show_hour = Math.floor(show_min/60);
+		        var show_sec = (parseInt(arr[i].end_s) - parseInt(arr[i].start_s))%60;
+		        show_min = show_min%60;
+		        
+		        var show_th = show_hour;
+		        var show_tm = show_min;
+		        var show_ts = show_sec;
+		        
+		        if(show_th<10){
+		        	show_th = "0" + show_hour;
+		        }
+		        if(show_tm < 10){
+		        	show_tm = "0" + show_min;
+		        }
+		        if(show_ts < 10){
+		        	show_ts = "0" + show_sec;
+		        }
+		        
 	 			var thumbnail = '<img src="https://img.youtube.com/vi/' + arr[i].youtubeID + '/1.jpg">';
-	 			$("#get_view").append(thumbnail + '<div onclick="viewVideo(\'' +arr[i].youtubeID.toString() + '\'' + ',' + arr[i].id + ',' + arr[i].start_s + ',' + arr[i].end_s +  ',' + i + ')" >' +arr[i].title+ '</div><div>' +arr[i].duration+ " " +arr[i].seq +'</div>' );
+	 			$("#get_view").append(thumbnail + show_th + ":" + show_tm + ":" + show_ts + '<div onclick="viewVideo(\'' +arr[i].youtubeID.toString() + '\'' + ',' + arr[i].id + ',' 
+	 					+ arr[i].start_s + ',' + arr[i].end_s +  ',' + i + ')" >' +arr[i].title+ 
+	 					'</div>' );
+	 			
+	 			total_runningtime += (parseInt(arr[i].end_s) - parseInt(arr[i].start_s));
 	 		}
+	 		
+	 		var total_min = Math.floor(total_runningtime/60);
+	        var total_hour = Math.floor(total_min/60);
+	        var total_sec = total_runningtime%60;
+	       	total_min = total_min%60;
+	        
+	        var total_th = total_hour;
+	        var total_tm = total_min;
+	        var total_ts = total_sec;
+	        
+	        if(total_th<10){
+	        	total_th = "0" + total_hour;
+	        }
+	        if(total_tm < 10){
+	        	total_tm = "0" + total_min;
+	        }
+	        if(total_ts < 10){
+	        	total_ts = "0" + total_sec;
+	        }
+	        
+	        $("#total_runningtime").append('<div> total runningTime ' +total_th + ":" + total_tm + ":" + total_ts + '</div>');
 	 	}
 	 	
 	 	
@@ -120,8 +169,6 @@
 						console.log("now: " +arr[ori_index].timer);
 						lastVideo = id; // **
 						ori_index = index;
-						//arr[ori_index].timer = db_timer + parseInt(arr[ori_index].timer);
-						//console.log("now: " +arr[ori_index].timer);
 					}, 
 					error : function(err){
 						console.log("timer : " + (db_timer + parseInt(arr[ori_index].timer)));
