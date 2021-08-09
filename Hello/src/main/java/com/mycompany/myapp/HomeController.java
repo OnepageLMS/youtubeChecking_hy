@@ -95,15 +95,30 @@ public class HomeController {
 		//System.out.println("test : " + videoService.getTime(103) + "  ");
 		model.addAttribute("list", videoService.getTime(103)); //여기에 내가 넣었네.. 바보인가..
 		
-		
-		
 		pvo.setPlaylistID(3);
-		//pvo.setStudentID(3);
+		
 		model.addAttribute("playlist", playlistService.getVideoList(pvo)); 
 		model.addAttribute("playlistCheck", playlistcheckService.getAllPlaylist());
 		
 		
-		return "showVideo3";
+		return "showVideo4";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/ajaxTest.do", method = RequestMethod.POST)
+	public List<PlaylistVO> ajaxTest() throws Exception {
+		
+	  PlaylistVO pvo = new PlaylistVO();
+	  pvo.setPlaylistID(3);
+	  
+	  return playlistService.getVideoList(pvo);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/ajaxTest2.do", method = RequestMethod.POST)
+	public List<PlaylistCheckVO> ajaxTest2() throws Exception {
+	  
+	  return  playlistcheckService.getAllPlaylist();
 	}
 	
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
