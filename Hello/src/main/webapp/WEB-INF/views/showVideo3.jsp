@@ -107,7 +107,7 @@
 				console.log("db_timer:" +db_timer);
 				$.ajax({
 					'type' : "post",
-					'url' : "http://localhost:8080/myapp/changevideo",
+					'url' : "changevideo",
 					'data' : {
 								lastTime : player.getCurrentTime(),
 								studentID : studentEmail,
