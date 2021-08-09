@@ -13,6 +13,8 @@ public class PlaylistCheckVO  {
 		private Date regdate;
 		private Date updateWatched;
 		
+		private int videoID; //이거 mapper에서 videoID사용해서 추가하는 
+		
 		public int getId() {
 			return id;
 		}
@@ -71,4 +73,10 @@ public class PlaylistCheckVO  {
 			this.updateWatched = updateWatched;
 		}
 		
+		public int getVideoID() {
+			return videoID;
+		}
+		public void setVideoID(int videoID) {
+			this.videoID = videoID;
+		}
 }

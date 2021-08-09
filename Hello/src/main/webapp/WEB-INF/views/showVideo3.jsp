@@ -11,34 +11,60 @@
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 	<script src="http://code.jquery.com/jquery-3.1.1.js"></script>
 	
+	<style>
+		
+		.first {
+			float: left;
+		   
+		    box-sizing: border-box;
+		}
+		
+		.second{
+			display: inline-block; 
+		    border: 1px solid green;
+		    padding: 10px;
+		    margin-left: 30px;
+		    box-sizing: border-box;
+		}
+
+		#myProgress {
+		  width: 100%;
+		  background-color: #ddd;
+		}
+		
+		#myBar {
+		  width: 1%;
+		  height: 30px;
+		  background-color: #287ebf;
+		}
+	</style>
+	
 </head>
 <body>
-
-    <div id="gangnamStyleIframe"></div>
- 	
-	 
-        
-        <div id='timerBox' class="timerBox">
-			<div id="time" class="time">00:00:00</div>
-		</div>
-		
-		<div id="total_runningtime"></div>
-        <div id="myPlaylist" style="border: 1px solid gold; padding: 10px; width: 40%; height: auto; min-height: 100px; overflow: auto;" >
-        	
-        	<div id="get_view" ></div>
+		<div>
+			<div class="first">
+	    		<div id="gangnamStyleIframe"></div>
+	    		<div id='timerBox' class="timerBox">
+					<div id="time" class="time">00:00:00</div>
+				</div>
+				<div id="myProgress">
+  					<div id="myBar"></div>
+				</div>
+			</div>
+			
+	        <div id="myPlaylist" class="second" >
+	        	<div id="total_runningtime"></div>
+	        	<div id="get_view" ></div>
+	        </div>
         </div>
-        
+       
          <form action = "attendance" method="post">
  			<button type = "submit"> 출석확인 </button>
  		</form>
  		
     <script type="text/javascript">
     	
-    	//alert(${list.lastTime});
-        /**
-         * Youtube API 로드 
-         This code loads the IFrame Player API code asynchronously.
-         */
+    	
         var tag = document.createElement('script');
         tag.src = "https://www.youtube.com/iframe_api";
         var firstScriptTag = document.getElementsByTagName('script')[0];
@@ -61,7 +87,7 @@
 		var hour = 0;
 		var min = 0;
 	    var sec = 0;
-		var db_timer;
+		var db_timer = 0;
 		var flag = 0;
 		var timer;
 		
@@ -79,17 +105,19 @@
 	 		<c:forEach items="${playlist}" var ="p" varStatus="vs">
 	 			arr.push({id : "${p.id}", youtubeID : "${p.youtubeID}", title : "${p.title}", 
 	 				start_s : "${p.start_s}", end_s : "${p.end_s}", playlistID : "${p.playlistID}", duration: "${p.duration}", seq : "${p.seq}",
-	 				lastTime : "${p.lastTime}", timer : "${p.timer}"});
+	 				lastTime : "${p.lastTime}", timer : "${p.timer}", watched : "${p.watched}"});
 	 		</c:forEach>
 	 		
 	 		lastVideo = arr[0].id;
 	 		myThumbnail();
+	 		move();
+	 		 
 	 	});
 	 	
-	 	
+	 	var total_runningtime = 0;
 	 	function myThumbnail(){
 	 		
-	 		var total_runningtime = 0;
+	 		//var total_runningtime = 0;
 	 		
 	 		for(var i=0; i<${fn:length(playlist)}; i++){
 	 			
@@ -113,11 +141,11 @@
 		        }
 		        
 	 			var thumbnail = '<img src="https://img.youtube.com/vi/' + arr[i].youtubeID + '/1.jpg">';
-	 			$("#get_view").append(thumbnail + show_th + ":" + show_tm + ":" + show_ts + '<div onclick="viewVideo(\'' +arr[i].youtubeID.toString() + '\'' + ',' + arr[i].id + ',' 
-	 					+ arr[i].start_s + ',' + arr[i].end_s +  ',' + i + ')" >' +arr[i].title+ 
+	 			$("#get_view").append(thumbnail + arr[i].title+ '<div onclick="viewVideo(\'' +arr[i].youtubeID.toString() + '\'' + ',' + arr[i].id + ',' 
+	 					+ arr[i].start_s + ',' + arr[i].end_s +  ',' + i + ')" >' +show_th + ":" + show_tm + ":" + show_ts + "//" +  (parseInt(arr[i].end_s) - parseInt(arr[i].start_s)) +
 	 					'</div>' );
 	 			
-	 			total_runningtime += (parseInt(arr[i].end_s) - parseInt(arr[i].start_s));
+	 			total_runningtime += parseInt(arr[i].duration);
 	 		}
 	 		
 	 		var total_min = Math.floor(total_runningtime/60);
@@ -141,6 +169,24 @@
 	        
 	        $("#total_runningtime").append('<div> total runningTime ' +total_th + ":" + total_tm + ":" + total_ts + '</div>');
 	 	}
+	 	
+	 	function move() {
+         	var arr2 = new Array();
+         	
+         	<c:forEach items="${playlistCheck}" var ="pc" varStatus="vs">
+ 	 			arr2.push({id : "${pc.id}",  totalWatched: "${pc.totalWatched}"});
+  			</c:forEach>
+  			//console.log(parseInt(arr2[0].totalWatched));
+  			//console.log(parseInt(total_runningtime));
+ 			//console.log(parseInt(arr2[0].totalWatched)/parseInt(total_runningtime));
+          
+             var elem = document.getElementById("myBar");
+             var width = parseInt(arr2[0].totalWatched / total_runningtime * 100);
+             
+             elem.style.width = width + "%";
+             elem.innerHTML = width + "%";
+               
+         }
 	 	
 	 	
         function viewVideo(videoID, id, startTime, endTime, index) { // 선택한 비디오 아이디를 가지고 플레이어 띄우기
@@ -171,6 +217,7 @@
 						ori_index = index;
 					}, 
 					error : function(err){
+						console.log("parseInt(arr[ori_index].timer : "  +parseInt(arr[ori_index].timer));
 						console.log("timer : " + (db_timer + parseInt(arr[ori_index].timer)));
 						console.log("videoID :" +videoID);
 						alert("playlist 추가 실패! : ", err.responseText);
@@ -188,7 +235,7 @@
 		               'startSeconds': startTime,
 		               'endSeconds': endTime,
 		               'suggestedQuality': 'default'})
-		               
+		          
 				
 				//이 영상을 처음보는 것이 아니라면 이전에 보던 시간부터 startTime을 설정해두기
  				
@@ -222,7 +269,7 @@
         function onPlayerReady(event) { 
         	//이거는 플레이리스트의 첫번째 영상이 실행되면서 진행되는 코드 (영상클릭없이 페이지 딱 처음 로딩되었을 )
             console.log('onPlayerReady 실행');
-            var start = document.getElementById("start_s"); //start에는 사용자가 지정해둔 시간이 들어가도록
+            //var start = document.getElementById("start_s"); //start에는 사용자가 지정해둔 시간이 들어가도록
             $.ajax({
 				'type' : "post",
 				'url' : "http://localhost:8080/myapp/videocheck",
@@ -231,15 +278,17 @@
 							videoID : arr[0].id //현재 재생중인 (플레이리스트 첫번째 영상의 ) id
 				},
 				success : function(data){
-					
-					if(Object.keys(data) != -1){ //보던 영상이라면
+					//console.log("ori_index" + ori_index);
+					/*if(Object.keys(data) != -1){ //보던 영상이라면
 						lastTime = Object.keys(data); //confirm문에서 이어서 시청할 때 사용하려고 했는데 별필요 없을듯!
 						start = Object.keys(data);
 						howmanytime = Object.values(data);
 						watchedFlag = 1;
+					}*/
+					if(arr[0].lastTime >= 0.0) {
+						player.seekTo(arr[0].lastTime, true);
 					}
-					
-					player.seekTo(start, true);
+					else player.seekTo(arr[0].start_s, true);
 			        player.pauseVideo();
 					
 				}, 
@@ -256,7 +305,7 @@
         	
         	/*영상이 시작하기 전에 이전에 봤던 곳부터 이어봤는지 물어보도록!*/
         	if(event.data == -1) {
-				if(flag == 0  && watchedFlag != 1){ //아직 끝까지 안봤을 때만 물어보기! //처음볼때는 물어보지 않기
+				if(flag == 0 && watchedFlag != 0){ //아직 끝까지 안봤을 때만 물어보기! //처음볼때는 물어보지 않기
         			
         			if (confirm("이어서 시청하시겠습니까?") == true){    
         				flag = 1;
@@ -309,7 +358,7 @@
         		        document.getElementById("time").innerHTML = th + ":" + tm + ":" + ts;
         		        //document.getElementById("test2").value = time + parseInt(howmanytime);
         		        db_timer = time;
-        		        console.log(db_timer);
+        		        //console.log("영상 실행 중 : " +db_timer);
         		        time++;
         			}
     		      }, 1000);
@@ -329,21 +378,44 @@
         	/*영상이 종료되었을 때 타이머 멈추도록, 영상을 끝까지 본 경우! (영상의 총 길이가 마지막으로 본 시간으로 들어간다.)*/
         	if(event.data == 0){
         		//document.getElementById("inmyPlaylist").style.backgroundColor = "#9DD1F1";
+        		console.log(ori_index);
+        		var watch = 1;
+        		if(arr[ori_index].watched == 2) {
+        			console.log("/////ori_index " + ori_index);
+        			watch = 2;
+        		}
         		$.ajax({
 					'type' : "post",
 					'url' : "http://localhost:8080/myapp/changewatch",
 					'data' : {
 								lastTime : player.getDuration(), //lastTime에 영상의 마지막 시간을 넣어주기
-								studentID : studentID, //studentID 그대로
+								studentID : studentEmail, //studentID 그대로
 								videoID : lastVideo, //videoID 그대로
 								timer : time + parseInt(howmanytime), //timer도 업데이트를 위해 필요
-								watch : 1 //영상을 다 보았으니 시청여부는 1로(출석) 업데이트!
+								watch : watch, //영상을 다 보았으니 시청여부는 1로(출석) 업데이트!
+								playlistID : arr[0].playlistID
 					},
 					
 					success : function(data){
 						//정보 잘 보냈다면 이것을 실행하라
 						//lastVideo = videoID;
 						console.log("lastTime : " +player.getDuration()+ "timer : " + howmanytime );
+						console.log("watched : " +watch + "ori_index" + ori_index); //이거 왜 1이냐..!!
+						
+						ori_index++;
+						console.log("watched : " +watch + "ori_index" + ori_index); //이거 왜 1이냐..!!
+						if(arr[ori_index].lastTime >= 0.0){//보던 영상이라는 의
+							player.loadVideoById({'videoId': arr[ori_index].youtubeID,
+					               'startSeconds': arr[ori_index].lastTime,
+					               'endSeconds': arr[ori_index].end_s,
+					               'suggestedQuality': 'default'})
+						}
+						else{
+							player.loadVideoById({'videoId': arr[ori_index].youtubeID,
+					               'startSeconds': arr[ori_index].start_s,
+					               'endSeconds': arr[ori_index].end_s,
+					               'suggestedQuality': 'default'})
+						}
 					}, 
 					error : function(err){
 						alert("playlist 추가 실패! : ", err.responseText);
@@ -351,23 +423,24 @@
 				});
         		
         		
-        		$.ajax({
+        		/*$.ajax({
 					'type' : "post",
 					'url' : "http://localhost:8080/myapp/playlistcheck",
 					'data' : {
-								studentID : studentID, //studentID 그대로
-								playlistID : playlistID
+								studentID : studentEmail, //studentID 그대로
+								playlistID : arr[0].playlistID
 					},
 					
 					success : function(data){
 						//정보 잘 보냈다면 이것을 실행하라
 						//lastVideo = videoID;
-						console.log("success// playlistID : " +playlistID);
+						console.log("success// playlistID : " +arr[0].playlistID);
 					}, 
 					error : function(err){
 						alert("playlist 추가 실패!2 : ", err.responseText);
+						console.log(studentEmail + " / " + arr[0].playlistID);
 					}
-				});
+				});*/
         		
 	       		 if(time != 0){
 	       		  	console.log("stop!!");
@@ -377,7 +450,20 @@
 	      		    
 	      		  
 	      	  	}
-	       	
+				/*ori_index++;
+				if(arr[ori_index].lastTime >= 0.0){//보던 영상이라는 의
+					player.loadVideoById({'videoId': arr[ori_index].youtubeID,
+			               'startSeconds': arr[ori_index].lastTime,
+			               'endSeconds': arr[ori_index].end_s,
+			               'suggestedQuality': 'default'})
+				}
+				else{
+					player.loadVideoById({'videoId': arr[ori_index].youtubeID,
+			               'startSeconds': arr[ori_index].start_s,
+			               'endSeconds': arr[ori_index].end_s,
+			               'suggestedQuality': 'default'})
+				}*/
+				
        		}
           
         	
@@ -408,12 +494,12 @@
         	$.ajax({
 				'type' : "post",
 				'url' : "http://localhost:8080/myapp/endOfclass",
-				'data' : {
+				'data' : { 
 							id : id,
-							studentId : studentID,
+							studentId : studentEmail,
 							lastTime : player.getCurrentTime(),
 							timer : document.getElementById("test2").value,
-							playlistID : playlistID
+							playlistID : arr[0].playlistID
 				},
 				
 				success : function(data){
@@ -429,6 +515,7 @@
 
         }
         
+       
         
         
     </script>

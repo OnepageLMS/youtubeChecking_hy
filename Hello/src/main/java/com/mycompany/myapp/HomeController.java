@@ -100,6 +100,7 @@ public class HomeController {
 		pvo.setPlaylistID(3);
 		//pvo.setStudentID(3);
 		model.addAttribute("playlist", playlistService.getVideoList(pvo)); 
+		model.addAttribute("playlistCheck", playlistcheckService.getAllPlaylist());
 		
 		
 		return "showVideo3";
@@ -204,7 +205,7 @@ public class HomeController {
 	
 	@RequestMapping(value = "/attendance", method = RequestMethod.POST)
 	public String main(Model model) {
-		model.addAttribute("playlistCheck", playlistcheckService.getAllPlaylsit());
+		model.addAttribute("playlistCheck", playlistcheckService.getAllPlaylist());
 
 		return "playlistCheck";
 	}
@@ -322,6 +323,8 @@ public class HomeController {
 		String studentID = request.getParameter("studentID");
 		int videoID = Integer.parseInt(request.getParameter("videoID"));
 		int watch = Integer.parseInt(request.getParameter("watch"));
+		int playlistID = Integer.parseInt(request.getParameter("playlistID"));
+		
 		
 		VideoVO vo = new VideoVO();
 		
@@ -330,6 +333,14 @@ public class HomeController {
 		vo.setvideoID(videoID);
 		vo.setTimer(timer);
 		vo.setWatched(watch);
+		watch = 2;
+		
+		PlaylistCheckVO pcvo = new PlaylistCheckVO();
+		
+		pcvo.setStudentID(Integer.parseInt(studentID));
+		pcvo.setPlaylistID(playlistID);
+		pcvo.setVideoID(videoID);
+		
 		
 		
 		if (videoService.updateWatch(vo) == 0) {
@@ -338,14 +349,41 @@ public class HomeController {
 
 		}
 		else {
-			System.out.println("데이터 업데이트 성공!!! =====");
+			playlistcheckService.updateTotalWatched(pcvo);
+			vo.setWatched(watch);
+			videoService.updateWatch(vo);
+		}
+			
+		return "redirect:/"; // 이것이 ajax 성공시 파라미터로 들어가는구만!!
+	}
+	
+
+	/*@RequestMapping(value = "/playlistcheck", method = RequestMethod.POST)
+	@ResponseBody
+	public String playlistCheck(HttpServletRequest request) {
+		int playlistID = Integer.parseInt(request.getParameter("playlistID"));
+		String studentID = request.getParameter("studentID");
+		System.out.println("playslitID : " + playlistID+ " studentID : " + studentID);
+		PlaylistCheckVO pcvo = new PlaylistCheckVO();
+		
+		pcvo.setStudentID(Integer.parseInt(studentID));
+		pcvo.setPlaylistID(playlistID);
+		
+		
+		if (playlistcheckService.updateTotalWatched(pcvo) == 0) {
+			System.out.println("플레이리스트 업데이트 실패 ");
+			//videoService.insertTime(vo);
+
+		}
+		else {
+			System.out.println("플레이리스트 업데이트 성공!!!" +playlistcheckService.updateTotalWatched(pcvo));
 			//playlistcheckService.updateTotalWatched(pcvo);
 			
 		}
 			
 		return "redirect:/"; // 이것이 ajax 성공시 파라미터로 들어가는구만!!
 	}
-	
+	*/
 	
 	@RequestMapping(value = "/videocheck", method = RequestMethod.POST)
 	@ResponseBody
@@ -370,31 +408,6 @@ public class HomeController {
 			map.put(-1.0, -1.0); //시간이 음수가 될 수 는 없으니
 		}
 		return map;
-	}
-	
-	@RequestMapping(value = "/playlistcheck", method = RequestMethod.POST)
-	@ResponseBody
-	public String playlistCheck(HttpServletRequest request) {
-		int playlistID = Integer.parseInt(request.getParameter("playlistID"));
-		String studentID = request.getParameter("studentID");
-		
-		PlaylistCheckVO pcvo = new PlaylistCheckVO();
-		
-		pcvo.setStudentID(Integer.parseInt(studentID));
-		pcvo.setPlaylistID(playlistID);
-		
-		if (playlistcheckService.updateTotalWatched(pcvo) == 0) {
-			System.out.println("플레이리스트 업데이트 실패 ");
-			//videoService.insertTime(vo);
-
-		}
-		else {
-			System.out.println("플레이리스트 업데이트 성공!!!" +playlistcheckService.updateTotalWatched(pcvo));
-			//playlistcheckService.updateTotalWatched(pcvo);
-			
-		}
-			
-		return "redirect:/"; // 이것이 ajax 성공시 파라미터로 들어가는구만!!
 	}
 	
 	

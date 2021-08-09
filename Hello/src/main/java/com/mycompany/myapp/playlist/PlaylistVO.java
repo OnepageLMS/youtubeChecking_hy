@@ -13,6 +13,7 @@ public class PlaylistVO {
 		private int seq;
 		private double lastTime;
 		private double timer;
+		private int watched;
 		private float duration;
 		private Date regdate;
 		
@@ -58,6 +59,13 @@ public class PlaylistVO {
 		}
 		public void setSeq(int seq) {
 			this.seq = seq;
+		}
+		
+		public int getWatched() {
+			return watched;
+		}
+		public void setWatched(int watched) {
+			this.watched = watched;
 		}
 		
 		public double getlastTime(){

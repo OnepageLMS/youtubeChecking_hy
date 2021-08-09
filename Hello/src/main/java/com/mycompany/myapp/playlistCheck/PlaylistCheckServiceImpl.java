@@ -37,7 +37,7 @@ public class PlaylistCheckServiceImpl implements PlaylistCheckService{
 	}
 	
 	@Override
-	public List<PlaylistCheckVO> getAllPlaylsit(){
-		return playlistcheckDAO.getAllPlaylsit();
+	public List<PlaylistCheckVO> getAllPlaylist(){
+		return playlistcheckDAO.getAllPlaylist();
 	}
 }
