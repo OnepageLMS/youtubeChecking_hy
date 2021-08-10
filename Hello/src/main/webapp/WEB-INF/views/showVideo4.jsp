@@ -146,9 +146,16 @@
 		        }
 		        
 	 			var thumbnail = '<img src="https://img.youtube.com/vi/' + playlist[i].youtubeID + '/1.jpg">';
-	 			$("#get_view").append(thumbnail + playlist[i].title+ '<div onclick="viewVideo(\'' +playlist[i].youtubeID.toString() + '\'' + ',' + playlist[i].id + ',' 
-	 					+ playlist[i].start_s + ',' + playlist[i].end_s +  ',' + i + ')" >' +show_th + ":" + show_tm + ":" + show_ts + "//" +  (parseInt(playlist[i].end_s) - parseInt(playlist[i].start_s)) +
-	 					'</div>' );
+	 			if(playlist[i].watched == 1){
+	 				$("#get_view").append(thumbnail + playlist[i].title+ '<div style = "background-color: #287ebf; width = auto" onclick="viewVideo(\'' +playlist[i].youtubeID.toString() + '\'' + ',' + playlist[i].id + ',' 
+		 					+ playlist[i].start_s + ',' + playlist[i].end_s +  ',' + i + ')" >' +show_th + ":" + show_tm + ":" + show_ts + "//" +  (parseInt(playlist[i].end_s) - parseInt(playlist[i].start_s)) +
+		 					'</div>' );
+	 			}
+	 			else{
+	 				$("#get_view").append(thumbnail + playlist[i].title+ '<div onclick="viewVideo(\'' +playlist[i].youtubeID.toString() + '\'' + ',' + playlist[i].id + ',' 
+		 					+ playlist[i].start_s + ',' + playlist[i].end_s +  ',' + i + ')" >' +show_th + ":" + show_tm + ":" + show_ts + "//" +  (parseInt(playlist[i].end_s) - parseInt(playlist[i].start_s)) +
+		 					'</div>' );
+	 			}
 	 			
 	 			total_runningtime += parseInt(playlist[i].duration);
 	 		}
@@ -172,7 +179,7 @@
 	        	total_ts = "0" + total_sec;
 	        }
 	        
-	        $("#total_runningtime").append('<div> total runningTime ' +total_th + ":" + total_tm + ":" + total_ts + '</div>');
+	        $("#total_runningtime").append('<div> total runningTime ' +total_th + ":" + total_tm + ":" + total_ts + " / " +total_runningtime+ '</div>');
 	 	}
 	 	
 	 	function move() {
@@ -259,8 +266,6 @@
         
         
         function onYouTubeIframeAPIReady() {
-        	//console.log("onYouTubeIframeAPIReady : " +videoId);
-        	//console.log(youtubeID.innerText);
             player = new YT.Player('gangnamStyleIframe', {
                 height: '315',            // <iframe> 태그 지정시 필요없음
                 width: '560',             // <iframe> 태그 지정시 필요없음
@@ -279,26 +284,20 @@
         function onPlayerReady(event) { 
         	//이거는 플레이리스트의 첫번째 영상이 실행되면서 진행되는 코드 (영상클릭없이 페이지 딱 처음 로딩되었을 )
             console.log('onPlayerReady 실행');
-            //var start = document.getElementById("start_s"); //start에는 사용자가 지정해둔 시간이 들어가도록
             $.ajax({
 				'type' : "post",
-				'url' : "http://localhost:8080/myapp/videocheck",
+				'url' : "videocheck",
 				'data' : {
 							studentID : studentEmail, //학생ID(email)
 							videoID : playlist[0].id //현재 재생중인 (플레이리스트 첫번째 영상의 ) id
 				},
 				success : function(data){
-					//console.log("ori_index" + ori_index);
-					/*if(Object.keys(data) != -1){ //보던 영상이라면
-						lastTime = Object.keys(data); //confirm문에서 이어서 시청할 때 사용하려고 했는데 별필요 없을듯!
-						start = Object.keys(data);
-						howmanytime = Object.values(data);
-						watchedFlag = 1;
-					}*/
-					if(playlist[0].lastTime >= 0.0) {
+					
+					if(playlist[0].lastTime >= 0.0) { //보던 영상이라면 lastTime부터 시작
 						player.seekTo(playlist[0].lastTime, true);
 					}
-					else player.seekTo(playlsit[0].start_s, true);
+					else //처음보는 영상이면 지정된 start_s부터 시작
+						player.seekTo(playlsit[0].start_s, true);
 			        player.pauseVideo();
 					
 				}, 
@@ -315,7 +314,8 @@
         	
         	/*영상이 시작하기 전에 이전에 봤던 곳부터 이어봤는지 물어보도록!*/
         	if(event.data == -1) {
-				if(flag == 0 && watchedFlag != 0){ //아직 끝까지 안봤을 때만 물어보기! //처음볼때는 물어보지 않기
+        		console.log("flag : " +flag+ " /watchedFlag : "+watchedFlag);
+				if(flag == 0 || watchedFlag != 1){ //아직 끝까지 안봤을 때만 물어보기! //처음볼때는 물어보지 않기
         			
         			if (confirm("이어서 시청하시겠습니까?") == true){    
         				flag = 1;
@@ -324,7 +324,7 @@
             		
             		else{   //취소
             			//console.log("취소 : " +start);
-            			player.seekTo(start_s, true);
+            			player.seekTo(playlist[ori_index].start_s, true);
             			flag = 1;
             			player.playVideo();
             			return;
@@ -364,11 +364,9 @@
         		        	ts = "0" + sec;
         		        }
         				
-        				//console.log("timer : " + timer);
+        		        
         		        document.getElementById("time").innerHTML = th + ":" + tm + ":" + ts;
-        		        //document.getElementById("test2").value = time + parseInt(howmanytime);
         		        db_timer = time;
-        		        //console.log("영상 실행 중 : " +db_timer);
         		        time++;
         			}
     		      }, 1000);
@@ -387,34 +385,28 @@
         	
         	/*영상이 종료되었을 때 타이머 멈추도록, 영상을 끝까지 본 경우! (영상의 총 길이가 마지막으로 본 시간으로 들어간다.)*/
         	if(event.data == 0){
+        		watchedFlag = 1;
         		//document.getElementById("inmyPlaylist").style.backgroundColor = "#9DD1F1";
-        		console.log(ori_index);
-        		var watch = 1;
-        		if(playlist[ori_index].watched == 2) {
-        			console.log("/////ori_index " + ori_index);
-        			watch = 2;
-        		}
+        		//console.log(ori_index);
+        		
         		$.ajax({
 					'type' : "post",
-					'url' : "http://localhost:8080/myapp/changewatch",
+					'url' : "changewatch",
 					'data' : {
 								lastTime : player.getDuration(), //lastTime에 영상의 마지막 시간을 넣어주기
 								studentID : studentEmail, //studentID 그대로
-								videoID : lastVideo, //videoID 그대로
-								timer : time + parseInt(howmanytime), //timer도 업데이트를 위해 필요
-								watch : watch, //영상을 다 보았으니 시청여부는 1로(출석) 업데이트!
+								videoID : playlist[ori_index].id, //videoID 그대로
+								timer : time + parseInt(playlist[ori_index].timer), //timer도 업데이트를 위해 필요
+								watch : 1, //영상을 다 보았으니 시청여부는 1로(출석) 업데이트!
 								playlistID : playlist[0].playlistID
 					},
 					
 					success : function(data){
-						//정보 잘 보냈다면 이것을 실행하라
-						//lastVideo = videoID;
-						console.log("lastTime : " +player.getDuration()+ "timer : " + howmanytime );
-						console.log("watched : " +watch + "ori_index" + ori_index); //이거 왜 1이냐..!!
-						
+						//영상을 잘 봤다면, 다음 영상으로 자동재생하도록
+						console.log("ori_index : " +ori_index + "videoID : " + playlist[ori_index].youtubeID +" id : " +playlist[ori_index].id);
 						ori_index++;
-						console.log("watched : " +watch + "ori_index" + ori_index); //이거 왜 1이냐..!!
-						if(playlist[ori_index].lastTime >= 0.0){//보던 영상이라는 의
+						//console.log("ori_index : " +ori_index + "videoID : " + playlist[ori_index].videoID);
+						if(playlist[ori_index].lastTime >= 0.0){//보던 영상이라는 의미
 							player.loadVideoById({'videoId': playlist[ori_index].youtubeID,
 					               'startSeconds': playlist[ori_index].lastTime,
 					               'endSeconds': playlist[ori_index].end_s,
@@ -426,31 +418,16 @@
 					               'endSeconds': playlist[ori_index].end_s,
 					               'suggestedQuality': 'default'})
 						}
+						move(); //영상 다 볼 때마다 시간 업데이트 해주기
 					}, 
 					error : function(err){
-						alert("playlist 추가 실패! : ", err.responseText);
+						alert("playlist 추가 실패! : ", err.responseText );
+						//console.log("실패했는데 watch : " + watch);
+						
 					}
 				});
         		
         		
-        		/*$.ajax({
-					'type' : "post",
-					'url' : "http://localhost:8080/myapp/playlistcheck",
-					'data' : {
-								studentID : studentEmail, //studentID 그대로
-								playlistID : arr[0].playlistID
-					},
-					
-					success : function(data){
-						//정보 잘 보냈다면 이것을 실행하라
-						//lastVideo = videoID;
-						console.log("success// playlistID : " +arr[0].playlistID);
-					}, 
-					error : function(err){
-						alert("playlist 추가 실패!2 : ", err.responseText);
-						console.log(studentEmail + " / " + arr[0].playlistID);
-					}
-				});*/
         		
 	       		 if(time != 0){
 	       		  	console.log("stop!!");
@@ -460,33 +437,12 @@
 	      		    
 	      		  
 	      	  	}
-				/*ori_index++;
-				if(arr[ori_index].lastTime >= 0.0){//보던 영상이라는 의
-					player.loadVideoById({'videoId': arr[ori_index].youtubeID,
-			               'startSeconds': arr[ori_index].lastTime,
-			               'endSeconds': arr[ori_index].end_s,
-			               'suggestedQuality': 'default'})
-				}
-				else{
-					player.loadVideoById({'videoId': arr[ori_index].youtubeID,
-			               'startSeconds': arr[ori_index].start_s,
-			               'endSeconds': arr[ori_index].end_s,
-			               'suggestedQuality': 'default'})
-				}*/
-				
        		}
           
         	
             // 재생여부를 통계로 쌓는다.
             collectPlayCount(event.data);
         }
-        
-        function stopYoutube() {
-        	document.getElementById("test1").value = player.getCurrentTime();
-            player.seekTo(0, true);     // 영상의 시간을 0초로 이동시킨다. 
-            player.stopVideo();
-        }
-
        
         var played = false;
         function collectPlayCount(data) {

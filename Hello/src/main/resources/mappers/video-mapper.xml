@@ -16,7 +16,7 @@
 	
 	<update id="updateWatch">
 		update videocheck
-		set lastTime=#{lastTime}, timer=#{timer}, watched=#{watched}
+		set lastTime=#{lastTime}, timer=#{timer}, watched=#{watched}, watchedUpdate=#{watchedUpdate}
 		where studentEmail=#{studentEmail} AND videoID=#{videoID}
 	</update>
 	

@@ -12,6 +12,7 @@ public class VideoVO {
 	private double lastTime;
 	private double timer;
 	private int watched;
+	private int watchedUpdate;
 	private Date regDate;
 	private Date modDate;
 	
@@ -62,6 +63,13 @@ public class VideoVO {
 	}
 	public void setWatched(int watched) {
 		this.watched = watched;
+	}
+	
+	public int getWatchedUpdate() {
+		return watchedUpdate;
+	}
+	public void setWatchedUpdate(int watchedUpdate) {
+		this.watchedUpdate = watchedUpdate;
 	}
 	
 	public Date getRegDate() {

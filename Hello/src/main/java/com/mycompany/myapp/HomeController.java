@@ -338,7 +338,9 @@ public class HomeController {
 		String studentID = request.getParameter("studentID");
 		int videoID = Integer.parseInt(request.getParameter("videoID"));
 		int watch = Integer.parseInt(request.getParameter("watch"));
+		int watchedUpdate = 1;
 		int playlistID = Integer.parseInt(request.getParameter("playlistID"));
+		
 		
 		
 		VideoVO vo = new VideoVO();
@@ -348,7 +350,10 @@ public class HomeController {
 		vo.setvideoID(videoID);
 		vo.setTimer(timer);
 		vo.setWatched(watch);
-		watch = 2;
+		//vo.setWatchedUpdate(watchedUpdate);
+		
+		VideoVO checkVO = videoService.getTime(vo); //위에서 set한 videoID를 가진 정보를 가져와서 checkVO에 넣는다.
+		System.out.println("controller : " +checkVO.getWatched() + " / " + checkVO.getWatchedUpdate() + " " + checkVO.getvideoID());
 		
 		PlaylistCheckVO pcvo = new PlaylistCheckVO();
 		
@@ -358,15 +363,23 @@ public class HomeController {
 		
 		
 		
+		
 		if (videoService.updateWatch(vo) == 0) {
 			System.out.println("데이터 업데이트 실패 ======= ");
 			videoService.insertTime(vo);
 
 		}
-		else {
-			playlistcheckService.updateTotalWatched(pcvo);
-			vo.setWatched(watch);
+		else { //업데이트가 성공하면 
+			if(checkVO.getWatchedUpdate() == 0) { //checkVO의정보가 playlistcheck에 업데이트가 되지 않았면 
+				System.out.println("값이 뭔데 ? " +vo.getWatchedUpdate());
+				System.out.println("값이 뭔데 ? " +vo.getWatched());
+				playlistcheckService.updateTotalWatched(pcvo); //
+			}
+			
+			vo.setWatchedUpdate(watchedUpdate); //업데이트 한 후에는 WatchedUpdate 1로 바꿔두
 			videoService.updateWatch(vo);
+			System.out.println("값이 뭔데 ? 업뎃 잘 됐니?" +vo.getWatchedUpdate());
+			//System.out.println("controller2 : " +vo.getWatched() + " / " + vo.getWatchedUpdate());
 		}
 			
 		return "redirect:/"; // 이것이 ajax 성공시 파라미터로 들어가는구만!!
@@ -447,6 +460,8 @@ public class HomeController {
 		vo.setLastTime(lastTime);
 		vo.setTimer(timer);
 		vo.setvideocheckPlaylistID(playlistID);
+		
+		
 	
 		System.out.println("studentID " + vo.getStudentEmail()+ " videoId" + vo.getvideoID());
 		System.out.println("lastTime" + vo.getLastTime()+ " timer" + vo.getTimer());
