@@ -17,7 +17,7 @@
 		update lms_playlistCheck
 		set totalWatched = totalWatched + (select duration
 		from Video join videocheck on Video.id = videocheck.videoID
-		where studentID=#{studentID} AND lms_playlistCheck.playlistID=#{playlistID} AND videocheck.videoID=#{videoID} AND videocheck.watched=1 AND videocheck.watchedUpdate=0)
+		where studentID=#{studentID} AND lms_playlistCheck.playlistID=#{playlistID} AND videocheck.videoID=#{videoID} AND videocheck.watched=1 )
 	</update>
 	
 	<delete id="deletePlaylist">

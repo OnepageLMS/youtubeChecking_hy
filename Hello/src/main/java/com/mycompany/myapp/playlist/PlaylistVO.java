@@ -7,6 +7,7 @@ public class PlaylistVO {
 		private int id;
 		private String youtubeID;
 		private String title;
+		private String newTitle;
 		private double start_s;
 		private double end_s;
 		private int playlistID;
@@ -35,6 +36,14 @@ public class PlaylistVO {
 		public void setTitle(String title) {
 			this.title = title;
 		}
+		
+		public String getnewTitle() {
+			return newTitle;
+		}
+		public void setnewTitle(String newTitle) {
+			this.newTitle = newTitle;
+		}
+		
 		public double getStart_s() {
 			return start_s;
 		}

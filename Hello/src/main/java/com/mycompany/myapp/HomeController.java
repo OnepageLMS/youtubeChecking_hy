@@ -225,7 +225,7 @@ public class HomeController {
 		return "playlistCheck";
 	}
 	
-	@RequestMapping(value = "/addok", method = RequestMethod.POST)
+	/*@RequestMapping(value = "/addok", method = RequestMethod.POST)
 	public String addPostOK(VideoVO vo) {
 		if (videoService.insertTime(vo) == 0)
 			System.out.println("데이터 추가실패 ");
@@ -244,7 +244,7 @@ public class HomeController {
 		else
 			System.out.println("데이터 업데이트 성공!!!");
 		return "redirect:/";
-	}
+	}*/
 	
 	@RequestMapping(value = "/tothumbnail", method = RequestMethod.POST)
 	@ResponseBody
@@ -338,7 +338,6 @@ public class HomeController {
 		String studentID = request.getParameter("studentID");
 		int videoID = Integer.parseInt(request.getParameter("videoID"));
 		int watch = Integer.parseInt(request.getParameter("watch"));
-		int watchedUpdate = 1;
 		int playlistID = Integer.parseInt(request.getParameter("playlistID"));
 		
 		
@@ -349,11 +348,12 @@ public class HomeController {
 		vo.setStudentEmail(studentID);
 		vo.setvideoID(videoID);
 		vo.setTimer(timer);
-		vo.setWatched(watch);
+		
 		//vo.setWatchedUpdate(watchedUpdate);
 		
 		VideoVO checkVO = videoService.getTime(vo); //위에서 set한 videoID를 가진 정보를 가져와서 checkVO에 넣는다.
-		System.out.println("controller : " +checkVO.getWatched() + " / " + checkVO.getWatchedUpdate() + " " + checkVO.getvideoID());
+		vo.setWatched(watch);
+		//System.out.println("controller : " +checkVO.getWatched() + " / " + checkVO.getWatchedUpdate() + " " +checkVO.getvideoID());
 		
 		PlaylistCheckVO pcvo = new PlaylistCheckVO();
 		
@@ -361,7 +361,10 @@ public class HomeController {
 		pcvo.setPlaylistID(playlistID);
 		pcvo.setVideoID(videoID);
 		
-		
+		//우선 현재 db테이블의 getWatched를 가져온다. 이때 가져온 값이 0이다
+		//vo.setWatched를 한다.
+		//vo.getWatched했는데 1이다.
+		//이럴때 playlistcheck테이블의 totalWatched업데이트 시켜주기
 		
 		
 		if (videoService.updateWatch(vo) == 0) {
@@ -370,48 +373,19 @@ public class HomeController {
 
 		}
 		else { //업데이트가 성공하면 
-			if(checkVO.getWatchedUpdate() == 0) { //checkVO의정보가 playlistcheck에 업데이트가 되지 않았면 
-				System.out.println("값이 뭔데 ? " +vo.getWatchedUpdate());
-				System.out.println("값이 뭔데 ? " +vo.getWatched());
-				playlistcheckService.updateTotalWatched(pcvo); //
+			if(checkVO.getWatched() == 0) { //checkVO의정보가 playlistcheck에 업데이트가 되지 않았면 
+				if(vo.getWatched() == 1) {
+					System.out.println("값이 뭔데 ? " +vo.getWatchedUpdate());
+					System.out.println("값이 뭔데 ? " +vo.getWatched());
+					playlistcheckService.updateTotalWatched(pcvo); //
+				}
+
 			}
 			
-			vo.setWatchedUpdate(watchedUpdate); //업데이트 한 후에는 WatchedUpdate 1로 바꿔두
-			videoService.updateWatch(vo);
-			System.out.println("값이 뭔데 ? 업뎃 잘 됐니?" +vo.getWatchedUpdate());
-			//System.out.println("controller2 : " +vo.getWatched() + " / " + vo.getWatchedUpdate());
 		}
 			
 		return "redirect:/"; // 이것이 ajax 성공시 파라미터로 들어가는구만!!
 	}
-	
-
-	/*@RequestMapping(value = "/playlistcheck", method = RequestMethod.POST)
-	@ResponseBody
-	public String playlistCheck(HttpServletRequest request) {
-		int playlistID = Integer.parseInt(request.getParameter("playlistID"));
-		String studentID = request.getParameter("studentID");
-		System.out.println("playslitID : " + playlistID+ " studentID : " + studentID);
-		PlaylistCheckVO pcvo = new PlaylistCheckVO();
-		
-		pcvo.setStudentID(Integer.parseInt(studentID));
-		pcvo.setPlaylistID(playlistID);
-		
-		
-		if (playlistcheckService.updateTotalWatched(pcvo) == 0) {
-			System.out.println("플레이리스트 업데이트 실패 ");
-			//videoService.insertTime(vo);
-
-		}
-		else {
-			System.out.println("플레이리스트 업데이트 성공!!!" +playlistcheckService.updateTotalWatched(pcvo));
-			//playlistcheckService.updateTotalWatched(pcvo);
-			
-		}
-			
-		return "redirect:/"; // 이것이 ajax 성공시 파라미터로 들어가는구만!!
-	}
-	*/
 	
 	@RequestMapping(value = "/videocheck", method = RequestMethod.POST)
 	@ResponseBody
@@ -438,59 +412,6 @@ public class HomeController {
 		return map;
 	}
 	
-	
-	@RequestMapping(value = "/endOfclass", method = RequestMethod.POST)
-	@ResponseBody
-	public String endOfclass(HttpServletRequest request) {
-		
-		String s_id = request.getParameter("id").trim();
-		if (s_id == null) {
-			s_id = "0";
-		}
-		int id = Integer.parseInt(request.getParameter("id"));
-		String studentID = request.getParameter("studentId");
-		double lastTime = Double.parseDouble(request.getParameter("lastTime"));
-		double timer = Double.parseDouble(request.getParameter("timer"));
-		int playlistID = Integer.parseInt(request.getParameter("playlistID"));
-		
-		VideoVO vo = new VideoVO();
-		//videoService.getTime(id);
-		vo.setStudentEmail(studentID);
-		vo.setvideoID(id);
-		vo.setLastTime(lastTime);
-		vo.setTimer(timer);
-		vo.setvideocheckPlaylistID(playlistID);
-		
-		
-	
-		System.out.println("studentID " + vo.getStudentEmail()+ " videoId" + vo.getvideoID());
-		System.out.println("lastTime" + vo.getLastTime()+ " timer" + vo.getTimer());
-		if (videoService.updateTime(vo) == 0) {
-			System.out.println("마지막 시간과 타이머 업데이트 실풰.. ");
-			videoService.insertTime(vo);
-
-		}
-		else {
-			System.out.println("마지막 시간과 타이머 업데이트 성공!!!");
-			//playlistcheckService.updateTotalWatched(pcvo);
-			
-		}
-			
-		return "classroom"; // 이것이 ajax 성공시 파라미터로 들어가는구만!!
-	}
-	
-	/*@RequestMapping(value = "/list/{studentID}", method = RequestMethod.GET)
-	public String detail(@PathVariable("studentID") int studentID, Model model) {
-		//List<VideoVO> videoVO = videoService.getTimeList();'
-		//System.out.println("+++" + videoService.getTimeList());
-		
-		VideoVO videoVO = videoService.getTime(studentID);
-		model.addAttribute("list", videoVO);
-		
-		//model.addAttribute("list", videoService.getTimeList());
-		//System.out.println("===" + videoService.getTimeList());
-		return "updateOK"; 
-	}*/
 	
 	
 }

@@ -7,5 +7,7 @@
         <typeAlias alias="VideoVO" type="com.mycompany.myapp.videocheck.VideoVO" />
         <typeAlias alias="PlaylistVO" type="com.mycompany.myapp.playlist.PlaylistVO" />
         <typeAlias alias="PlaylistCheckVO" type="com.mycompany.myapp.playlistCheck.PlaylistCheckVO" />
+        <typeAlias alias="ClassContentsVO" type="com.mycompany.myapp.classContents.ClassContentsVO" />
+        <typeAlias alias="ClassVO" type="com.mycompany.myapp.classes.ClassesVO" />
     </typeAliases>
 </configuration> 

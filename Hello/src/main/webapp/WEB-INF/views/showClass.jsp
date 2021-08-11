@@ -1,0 +1,129 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>contentsList</title>
+<style>
+	.contents{
+		padding: 10px;
+	}
+	
+	.week{
+		border: 2px solid lightslategrey;
+		padding: 5px;
+		margin: 5px;
+		width: 50%;
+	}
+	
+	.content{
+		border: 1px solid lightslategrey;
+		margin: 3px;
+		padding-left: 5px;
+	}
+	
+	.title {
+		font-size: 16px;
+	}
+	
+	a{
+		text-decoration: none;
+	}
+</style>
+</head>
+<script 
+  src="http://code.jquery.com/jquery-3.5.1.js"
+  integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+  crossorigin="anonymous"></script>
+<script>
+	$(document).ready(function(){
+		var allContents = JSON.parse('${allContents}');
+		var weekContents = JSON.parse('${weekContents}');
+		//var weekContents;
+		//var weekContents_length = 0;
+		
+		//$(function(){ //db로부터 정보 불러오기!
+	 		
+	 		/*$.ajax({
+	 			  url : "../weekContents",
+	 			  type : "post",
+	 			  async : false,
+	 			  success : function(data) {
+	 				 console.log(data);
+	 				
+	 				 weekContents = data;
+	 				 weekContents_length = Object.keys(weekContents).length;
+	 				 console.log(" // " +weekContents[0].description);
+	 			  },
+	 			  error : function() {
+	 			  	alert("error");
+	 			  }
+	 		})*/
+	 		console.log("안녕! " + weekContents[0].youtubeID);
+	 		
+	 		for(var i=0; i<weekContents.length; i++){
+	 			console.log("youtubeID : " +weekContents[i].youtubeID );
+				var thumbnail = '<img src="https://img.youtube.com/vi/' + weekContents[i].youtubeID + '/1.jpg">';
+				var week = weekContents[i].week - 1;
+				var day = weekContents[i].day - 1;
+				var date = new Date(weekContents[i].startDate.time); //timestamp -> actural time
+				var startDate = date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes();
+				var content = $('.week:eq(' + week + ')').children('.day:eq(' + day+ ')');
+				
+				content.append(thumbnail + "<div class='content' seq='" + weekContents[i].daySeq + "' style='cursor: pointer;'>"
+						+ '<p class="title"> <b>' +  (weekContents[i].daySeq+1) + " " + weekContents[i].title + '</b>' + '</p>'
+						+ '<p class="startDate">' + "시작일: " + startDate + '</p>'
+					+ "</div>");
+				
+				//$("#weekContents").append(thumbnail +'<div> ' + weekContents[j].newTitle + '</div>');
+			}
+	 		
+	 		 
+	 	//});
+		
+		
+		/*for(var i=0; i<allContents.length; i++){
+			var week = allContents[i].week - 1;
+			var day = allContents[i].day - 1;
+			var date = new Date(allContents[i].startDate.time); //timestamp -> actural time
+			var startDate = date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes();
+			var content = $('.week:eq(' + week + ')').children('.day:eq(' + day+ ')');
+			var onclickDetail = "location.href='../contentDetail/" + allContents[i].id + "'";
+			
+			content.append("<div class='content' seq='" + allContents[i].daySeq + "' onclick=" + onclickDetail + " style='cursor: pointer;'>"
+							+ '<p class="title"> <b>' +  (allContents[i].daySeq+1) + " " + allContents[i].title 
+								+ '</b><a href="../editContent/' + allContents[i].id + '"> 수정</a>'
+								+ '<a href="javascript:deleteCheck(' + allContents[i].classID +","+ allContents[i].id + ')"> 삭제</a>'
+							+ '</p>'
+							+ '<p class="startDate">' + "시작일: " + startDate + '</p>'
+						 	+ '<p class="published">' + "공개: " + allContents[i].published + '</p>'
+						+ "</div>");
+			
+		}*/
+	});
+	function deleteCheck(classID, id){
+		var a = confirm("정말 삭제하시겠습니까?");
+		if (a)
+			location.href = '../deleteContent/' + classID + "/" + id;
+	}
+	
+</script>
+<body>
+	<div class="contents" classID="${classInfo.id}">
+		<c:forEach var="i" begin="1" end="${classInfo.weeks}">
+			<div class="week" week="${i}">
+				<h3>${i}주차</h3>
+				<c:forEach var="j" begin="1" end="${classInfo.days}">
+					<div class="day" day="${j}">${j} 차시
+						<div id="weekContents"></div>
+					</div>
+				</c:forEach>
+			</div>
+		</c:forEach>
+
+	</div>
+</body>
+</html>

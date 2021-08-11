@@ -23,7 +23,7 @@
 			display: inline-block; 
 		    border: 1px solid green;
 		    padding: 10px;
-		    margin-left: 30px;
+		    
 		    box-sizing: border-box;
 		}
 
@@ -43,6 +43,7 @@
 <body>
 		<div>
 			<div class="first">
+				<p class="videoTitle"></p>
 	    		<div id="gangnamStyleIframe"></div>
 	    		<div id='timerBox' class="timerBox">
 					<div id="time" class="time">00:00:00</div>
@@ -146,13 +147,30 @@
 		        }
 		        
 	 			var thumbnail = '<img src="https://img.youtube.com/vi/' + playlist[i].youtubeID + '/1.jpg">';
+	 			
+	 			var newTitle = playlist[i].newTitle;
+	 			var title = playlist[i].title;
+	 			
+	 			if (playlist[i].newTitle == null){
+	 				playlist[i].newTitle = playlist[i].title;
+	 				playlist[i].title = '';
+			    }
+	 			
+	 			console.log("title " + (playlist[i].newTitle) + " length " + (playlist[i].newTitle).length);
+	 			if ((playlist[i].newTitle).length > 45){
+	 				playlist[i].newTitle = (playlist[i].newTitle).substring(0, 45) + " ..."; 
+				}
+	 			
+	 			//document.getElementById("gangnamStyleIframe").innerText = newTitle;
+	 			//$('.videoTitle').text(newTitle);
+	 			
 	 			if(playlist[i].watched == 1){
-	 				$("#get_view").append(thumbnail + playlist[i].title+ '<div style = "background-color: #287ebf; width = auto" onclick="viewVideo(\'' +playlist[i].youtubeID.toString() + '\'' + ',' + playlist[i].id + ',' 
+	 				$("#get_view").append(thumbnail + playlist[i].newTitle + '<div style = "background-color: #287ebf; width = auto" onclick="viewVideo(\'' +playlist[i].youtubeID.toString() + '\'' + ',' + playlist[i].id + ',' 
 		 					+ playlist[i].start_s + ',' + playlist[i].end_s +  ',' + i + ')" >' +show_th + ":" + show_tm + ":" + show_ts + "//" +  (parseInt(playlist[i].end_s) - parseInt(playlist[i].start_s)) +
 		 					'</div>' );
 	 			}
 	 			else{
-	 				$("#get_view").append(thumbnail + playlist[i].title+ '<div onclick="viewVideo(\'' +playlist[i].youtubeID.toString() + '\'' + ',' + playlist[i].id + ',' 
+	 				$("#get_view").append(thumbnail + playlist[i].newTitle + '<div onclick="viewVideo(\'' +playlist[i].youtubeID.toString() + '\'' + ',' + playlist[i].id + ',' 
 		 					+ playlist[i].start_s + ',' + playlist[i].end_s +  ',' + i + ')" >' +show_th + ":" + show_tm + ":" + show_ts + "//" +  (parseInt(playlist[i].end_s) - parseInt(playlist[i].start_s)) +
 		 					'</div>' );
 	 			}
@@ -213,6 +231,7 @@
  			start_s = startTime;
  			//console.log("timer : " +time + " parseInt(arr[index].timer) : " +(arr[index].timer));
  			//console.log("timer : " + (db_timer + parseInt(arr[ori_index].timer)));
+ 			$('.videoTitle').text(playlist[ori_index].newTitle);
  			if (confirm("다른 영상으로 변경하시겠습니까? ") == true){    //확인
  				flag = 0;
  	 			time = 0;
@@ -284,6 +303,7 @@
         function onPlayerReady(event) { 
         	//이거는 플레이리스트의 첫번째 영상이 실행되면서 진행되는 코드 (영상클릭없이 페이지 딱 처음 로딩되었을 )
             console.log('onPlayerReady 실행');
+            $('.videoTitle').text(playlist[ori_index].newTitle);
             $.ajax({
 				'type' : "post",
 				'url' : "videocheck",
@@ -386,8 +406,6 @@
         	/*영상이 종료되었을 때 타이머 멈추도록, 영상을 끝까지 본 경우! (영상의 총 길이가 마지막으로 본 시간으로 들어간다.)*/
         	if(event.data == 0){
         		watchedFlag = 1;
-        		//document.getElementById("inmyPlaylist").style.backgroundColor = "#9DD1F1";
-        		//console.log(ori_index);
         		
         		$.ajax({
 					'type' : "post",
@@ -405,7 +423,8 @@
 						//영상을 잘 봤다면, 다음 영상으로 자동재생하도록
 						console.log("ori_index : " +ori_index + "videoID : " + playlist[ori_index].youtubeID +" id : " +playlist[ori_index].id);
 						ori_index++;
-						//console.log("ori_index : " +ori_index + "videoID : " + playlist[ori_index].videoID);
+						$('.videoTitle').text(playlist[ori_index].newTitle);
+						
 						if(playlist[ori_index].lastTime >= 0.0){//보던 영상이라는 의미
 							player.loadVideoById({'videoId': playlist[ori_index].youtubeID,
 					               'startSeconds': playlist[ori_index].lastTime,
