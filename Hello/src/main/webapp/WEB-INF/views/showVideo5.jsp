@@ -80,7 +80,6 @@
          
         var player;
         var playlist;
-        var playlistcheck;
 	 	var playlist_length;
         var studentEmail = ${list.studentEmail};
         
@@ -104,13 +103,18 @@
  		
 	 	$(function(){ //db로부터 정보 불러오기!
 	 		
-	 		playlist = JSON.parse('${playlist}');
-			console.log(playlist);
-			playlistcheck = JSON.parse('${playlistCheck}');
-			console.log(playlistcheck);
-			//console.log("playlistCheck : " +playlistCheck);
-	 		
-	 		
+	 		$.ajax({
+	 			  url : "../ajaxTest.do",
+	 			  type : "post",
+	 			  async : false,
+	 			  success : function(data) {
+	 				 playlist = data;
+	 				 playlist_length = Object.keys(playlist).length;
+	 			  },
+	 			  error : function() {
+	 			  	alert("error");
+	 			  }
+	 		})
 	 		
 	 		lastVideo = playlist[0].id;
 	 		myThumbnail();
@@ -122,7 +126,7 @@
 	 	
 	 	function myThumbnail(){
 	 		
-	 		for(var i=0; i<playlist.length; i++){
+	 		for(var i=0; i<playlist_length; i++){
 	 			var show_min = Math.floor((parseInt(playlist[i].end_s) - parseInt(playlist[i].start_s))/60);
 		        var show_hour = Math.floor(show_min/60);
 		        var show_sec = (parseInt(playlist[i].end_s) - parseInt(playlist[i].start_s))%60;
@@ -143,7 +147,7 @@
 		        }
 		        
 	 			var thumbnail = '<img src="https://img.youtube.com/vi/' + playlist[i].youtubeID + '/1.jpg">';
-	 			console.log("thumbnail : " +thumbnail);
+	 			
 	 			var newTitle = playlist[i].newTitle;
 	 			var title = playlist[i].title;
 	 			
@@ -197,11 +201,25 @@
 	 	}
 	 	
 	 	function move() {
+         	var playlistcheck;
+ 			
+ 			$.ajax({
+	 			  url : "../ajaxTest2.do",
+	 			  type : "post",
+	 			  async : false,
+	 			  success : function(data) {
+	 				 playlistcheck = data;
+	 				 playlistcheck_length = Object.keys(playlist).length;
+	 			  },
+	 			  error : function() {
+	 			  	alert("error");
+	 			  }
+	 		})
+	 		
+	 		
+          
              var elem = document.getElementById("myBar");
              var width = parseInt(playlistcheck[0].totalWatched / total_runningtime * 100);
-             //여기서 0번째가 아니라 playlistID와 같은 친구를 ㅔ뎌와야함.
-             //그래서 getAllPlaylist를 하면 안될듯!
-             console.log("move : "+  playlistcheck[0].totalWatched );
              
              elem.style.width = width + "%";
              elem.innerHTML = width + "%";
@@ -223,7 +241,7 @@
 				console.log("db_timer:" +db_timer);
 				$.ajax({
 					'type' : "post",
-					'url' : "../changevideo",
+					'url' : "changevideo",
 					'data' : {
 								lastTime : player.getCurrentTime(),
 								studentID : studentEmail,
@@ -288,7 +306,7 @@
             $('.videoTitle').text(playlist[ori_index].newTitle);
             $.ajax({
 				'type' : "post",
-				'url' : "../videocheck",
+				'url' : "videocheck",
 				'data' : {
 							studentID : studentEmail, //학생ID(email)
 							videoID : playlist[0].id //현재 재생중인 (플레이리스트 첫번째 영상의 ) id
@@ -304,7 +322,7 @@
 					
 				}, 
 				error : function(err){
-					alert("playlist 추가 실패! ===========: ", err.responseText);
+					alert("playlist 추가 실패! : ", err.responseText);
 				}
 			});
             console.log('onPlayerReady 마감');

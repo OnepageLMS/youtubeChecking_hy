@@ -30,6 +30,13 @@
 		where id=#{id}
 	</select>
 	
+	<select id="getSamePlaylistID" resultType="PlaylistCheckVO">
+		SELECT * 
+		FROM lms_playlistCheck 
+		where playlistID = #{playlistID} 
+	</select>
+
+	
 	<select id="getAllPlaylist" resultType="PlaylistCheckVO">
 		SELECT * 
 		FROM lms_playlistCheck order

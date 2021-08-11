@@ -101,7 +101,7 @@ public class HomeController {
 		model.addAttribute("playlistCheck", playlistcheckService.getAllPlaylist());
 		
 		
-		return "showVideo4";
+		return "showVideo5";
 	}
 	
 	@ResponseBody

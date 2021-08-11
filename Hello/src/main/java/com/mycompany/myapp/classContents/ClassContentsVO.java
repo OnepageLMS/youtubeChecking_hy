@@ -19,6 +19,7 @@ public class ClassContentsVO {
 	private String youtubeID;
 	private String Vtitle;
 	private String newTitle;
+	private int seq;
 	
 	public int getId() {
 		return id;
@@ -112,5 +113,12 @@ public class ClassContentsVO {
 	}
 	public void setnewTitle(String newTitle) {
 		this.newTitle = newTitle;
+	}
+	
+	public int getSeq() {
+		return seq;
+	}
+	public void setSeq(int seq) {
+		this.seq = seq;
 	}
 }

@@ -32,6 +32,9 @@
 	a{
 		text-decoration: none;
 	}
+	
+	
+		
 </style>
 </head>
 <script 
@@ -39,47 +42,51 @@
   integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
   crossorigin="anonymous"></script>
 <script>
+	var playlistcheck;
+	var playlist;
+	var total_runningtime;
 	$(document).ready(function(){
 		var allContents = JSON.parse('${allContents}');
+		console.log(allContents.length);
 		var weekContents = JSON.parse('${weekContents}');
-		//var weekContents;
-		//var weekContents_length = 0;
+		playlistcheck = JSON.parse('${playlistCheck}'); //progress bar를 위해
+		playlist = JSON.parse('${playlist}'); //total 시간을 위해
+		total_runningtime = 0;
 		
-		//$(function(){ //db로부터 정보 불러오기!
-	 		
-	 		/*$.ajax({
-	 			  url : "../weekContents",
-	 			  type : "post",
-	 			  async : false,
-	 			  success : function(data) {
-	 				 console.log(data);
-	 				
-	 				 weekContents = data;
-	 				 weekContents_length = Object.keys(weekContents).length;
-	 				 console.log(" // " +weekContents[0].description);
-	 			  },
-	 			  error : function() {
-	 			  	alert("error");
-	 			  }
-	 		})*/
-	 		console.log("안녕! " + weekContents[0].youtubeID);
+			
+		
 	 		
 	 		for(var i=0; i<weekContents.length; i++){
-	 			console.log("youtubeID : " +weekContents[i].youtubeID );
+	 			console.log("youtubeID : " +weekContents[i].youtubeID + " / playlistID : " + weekContents[i].playlistID + " week " +  weekContents[i].week + " day " +  weekContents[i].day + " / title : " + weekContents[i].title );
 				var thumbnail = '<img src="https://img.youtube.com/vi/' + weekContents[i].youtubeID + '/1.jpg">';
-				var week = weekContents[i].week - 1;
+				var week = weekContents[i].week -1 ;
 				var day = weekContents[i].day - 1;
 				var date = new Date(weekContents[i].startDate.time); //timestamp -> actural time
 				var startDate = date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes();
+				var onclickDetail = "location.href='../contentDetail/" + weekContents[i].playlistID + "'";
+				
 				var content = $('.week:eq(' + week + ')').children('.day:eq(' + day+ ')');
 				
-				content.append(thumbnail + "<div class='content' seq='" + weekContents[i].daySeq + "' style='cursor: pointer;'>"
-						+ '<p class="title"> <b>' +  (weekContents[i].daySeq+1) + " " + weekContents[i].title + '</b>' + '</p>'
-						+ '<p class="startDate">' + "시작일: " + startDate + '</p>'
-					+ "</div>");
+				//if(i>0){
+					if(i==0 || weekContents[i-1].playlistID != weekContents[i].playlistID){ //강의리스트에서는 플레이리스트의 첫번째 영상 썸네일만 보이도록
+					content.append("<div  class='content' seq='" + weekContents[i].daySeq + "' onclick=" + onclickDetail + " style='cursor: pointer;'>"
+							+ '<p class="title"> <b>' +  (weekContents[i].daySeq+1) + " " + weekContents[i].title + '</b>' + '</p>'
+							+ '<p class="startDate">' + "시작일: " + startDate + '</p>'
+						+ thumbnail + "youtubeID : " +weekContents[i].youtubeID +  " week " +  weekContents[i].week 
+						+ " day " + weekContents[i].day +  " seq " + weekContents[i].seq 
+						+ " playlistID " + weekContents[i].playlistID + "<div id='myProgress'><div id='myBar'></div></div> </div>");
+					}
+				//}
 				
 				//$("#weekContents").append(thumbnail +'<div> ' + weekContents[j].newTitle + '</div>');
+				//이제 클릭했을 때 해당하는 플레이리스트가 띄워지도록!
+				//클릭했을 때 ajax를 통해서 playlistID를 넘겨주기 (x) -> 페이지 이동이 일어나야하는데
+				//
 			}
+	 		
+	 		for(var j=0; j<playlist.length; j++){
+	 			total_runningtime += parseInt(playlist[j].duration);
+	 		}
 	 		
 	 		 
 	 	//});
@@ -103,12 +110,24 @@
 						+ "</div>");
 			
 		}*/
+		//move();
 	});
 	function deleteCheck(classID, id){
 		var a = confirm("정말 삭제하시겠습니까?");
 		if (a)
 			location.href = '../deleteContent/' + classID + "/" + id;
 	}
+	
+	/*function move() {
+        var elem = document.getElementsByClassName("myBar");
+        var width = 0;
+        width = parseInt(playlistcheck[0].totalWatched / total_runningtime * 100);
+        console.log("move : "+  width );
+        
+        //elem.style.width = width + "%";
+        elem.innerHTML = width + "%";
+          
+    }*/
 	
 </script>
 <body>
@@ -118,7 +137,7 @@
 				<h3>${i}주차</h3>
 				<c:forEach var="j" begin="1" end="${classInfo.days}">
 					<div class="day" day="${j}">${j} 차시
-						<div id="weekContents"></div>
+						
 					</div>
 				</c:forEach>
 			</div>
