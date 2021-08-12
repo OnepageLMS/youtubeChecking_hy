@@ -18,6 +18,7 @@
 		set totalWatched = totalWatched + (select duration
 		from Video join videocheck on Video.id = videocheck.videoID
 		where studentID=#{studentID} AND lms_playlistCheck.playlistID=#{playlistID} AND videocheck.videoID=#{videoID} AND videocheck.watched=1 )
+		where playlistID=#{playlistID}
 	</update>
 	
 	<delete id="deletePlaylist">
@@ -30,12 +31,11 @@
 		where id=#{id}
 	</select>
 	
-	<select id="getSamePlaylistID" resultType="PlaylistCheckVO">
-		SELECT * 
-		FROM lms_playlistCheck 
-		where playlistID = #{playlistID} 
+	<select id="getPlaylistByPlaylistID" resultType="PlaylistCheckVO">
+		select * 
+		from lms_playlistCheck
+		where playlistID=#{playlistID}
 	</select>
-
 	
 	<select id="getAllPlaylist" resultType="PlaylistCheckVO">
 		SELECT * 

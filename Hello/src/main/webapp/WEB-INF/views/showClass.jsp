@@ -47,14 +47,18 @@
 	var total_runningtime;
 	$(document).ready(function(){
 		var allContents = JSON.parse('${allContents}');
-		console.log(allContents.length);
+		//console.log(allContents.length);
 		var weekContents = JSON.parse('${weekContents}');
 		playlistcheck = JSON.parse('${playlistCheck}'); //progress bar를 위해
 		playlist = JSON.parse('${playlist}'); //total 시간을 위해
 		total_runningtime = 0;
 		
-			
+		var classInfo = document.getElementsByClassName( 'contents' )[0].getAttribute( 'classID' );
 		
+		//var classInfo = JSON.parse('${classInfro}');
+		console.log("classID는 다음과 같습니다. " + classInfo);
+		//classInfo를 받아와서 이거를 detail페이지로 넘겨주자.?	
+		console.log("length : " +weekContents.length );
 	 		
 	 		for(var i=0; i<weekContents.length; i++){
 	 			console.log("youtubeID : " +weekContents[i].youtubeID + " / playlistID : " + weekContents[i].playlistID + " week " +  weekContents[i].week + " day " +  weekContents[i].day + " / title : " + weekContents[i].title );
@@ -62,9 +66,13 @@
 				var week = weekContents[i].week -1 ;
 				var day = weekContents[i].day - 1;
 				var date = new Date(weekContents[i].startDate.time); //timestamp -> actural time
+				console.log("date : "+ date);
+				var result_date = convertTotalLength(date);
+				console.log(result_date);
 				var startDate = date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes();
-				var onclickDetail = "location.href='../contentDetail/" + weekContents[i].playlistID + "'";
-				
+				console.log("startDate : " + startDate);
+				var onclickDetail = "location.href='../contentDetail/" + weekContents[i].playlistID +  "/" +classInfo+  "'";
+				console.log(onclickDetail);
 				var content = $('.week:eq(' + week + ')').children('.day:eq(' + day+ ')');
 				
 				//if(i>0){
@@ -118,16 +126,24 @@
 			location.href = '../deleteContent/' + classID + "/" + id;
 	}
 	
-	/*function move() {
-        var elem = document.getElementsByClassName("myBar");
-        var width = 0;
-        width = parseInt(playlistcheck[0].totalWatched / total_runningtime * 100);
-        console.log("move : "+  width );
-        
-        //elem.style.width = width + "%";
-        elem.innerHTML = width + "%";
-          
-    }*/
+	//GMT+0900가 한국 표준시간이라고 한다!
+	//선생님이 startDate를 입력하고 db에 그대로 저장이 안되고 있는걸까?? 
+	//이 함수로 넘어오는 파라미터는 초인데,, date는 Sun Aug 08 2021 15:00:00 GMT+0900 이러한 형태로 되어있다. ==>파라미터로 무엇을 넣어야할지
+	//이 함수는 초를 입력받아서 시/분/초로 나타내주는 함수처럼 보인다!
+	//다시한번 물어보기!
+	
+	function convertTotalLength(seconds){
+		var seconds_hh = Math.floor(seconds / 3600);
+		var seconds_mm = Math.floor(seconds % 3600 / 60);
+		var seconds_ss = seconds % 3600 % 60;
+		var result = "";
+		
+		if (seconds_hh > 0)
+			result = seconds_hh + ":";
+		result += seconds_mm + ":" + seconds_ss;
+		
+		return result;
+	}
 	
 </script>
 <body>

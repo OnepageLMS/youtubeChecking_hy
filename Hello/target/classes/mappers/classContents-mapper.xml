@@ -34,6 +34,12 @@
 
 	</select>
 	
+	<select id="getSamePlaylistID" resultType="ClassContentsVO">
+		SELECT * 
+		FROM lms_classPlaylist
+		where playlistID = #{playlistID} 
+	</select>
+	
 	<select id="getAllClassContents" resultType="ClassContentsVO">
 		select * from lms_classPlaylist
 		where classID=#{classID} order by week and day and daySeq

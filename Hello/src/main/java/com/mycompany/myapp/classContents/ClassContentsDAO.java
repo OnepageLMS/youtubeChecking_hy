@@ -6,6 +6,8 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.mycompany.myapp.playlistCheck.PlaylistCheckVO;
+
 @Repository
 public class ClassContentsDAO {
 	@Autowired
@@ -34,6 +36,10 @@ public class ClassContentsDAO {
 	public List<ClassContentsVO> getWeekClassContents(ClassContentsVO vo){
 		List<ClassContentsVO> result = sqlSession.selectList("ClassContents.getWeekClassContents", vo);
 		return result;
+	}
+	
+	public ClassContentsVO getSamePlaylistID(ClassContentsVO vo) {
+		return sqlSession.selectOne("ClassContents.getSamePlaylistID", vo);
 	}
 	
 	public List<ClassContentsVO> getAllClassContents(int classID){

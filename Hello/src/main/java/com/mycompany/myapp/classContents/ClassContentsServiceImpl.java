@@ -38,6 +38,11 @@ public class ClassContentsServiceImpl implements ClassContentsService{
 	}
 	
 	@Override
+	public ClassContentsVO getSamePlaylistID(ClassContentsVO vo) {
+		return classContentsDAO.getSamePlaylistID(vo);
+	}
+	
+	@Override
 	public List<ClassContentsVO> getAllClassContents(int classID){
 		return classContentsDAO.getAllClassContents(classID);
 	}

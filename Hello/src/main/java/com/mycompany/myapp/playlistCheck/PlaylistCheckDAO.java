@@ -37,9 +37,10 @@ public class PlaylistCheckDAO {
 		return sqlSession.selectOne("PlaylistCheck.getPlaylist", id);
 	}
 	
-	public PlaylistCheckVO getSamePlaylistID(PlaylistCheckVO vo) {
-		return sqlSession.selectOne("PlaylistCheck.getSamePlaylistID", vo);
+	public PlaylistCheckVO getPlaylistByPlaylistID(int playlistID) {
+		return sqlSession.selectOne("PlaylistCheck.getPlaylistByPlaylistID", playlistID);
 	}
+	
 	
 	public List<PlaylistCheckVO> getAllPlaylist() {
 		//System.out.println("dao!");

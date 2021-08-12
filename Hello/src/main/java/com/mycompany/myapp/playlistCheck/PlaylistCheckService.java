@@ -13,7 +13,7 @@ public interface PlaylistCheckService  {
 	
 	public PlaylistCheckVO getPlaylist(int playlistID);
 	
-	public PlaylistCheckVO getSamePlaylistID(PlaylistCheckVO vo);
+	public PlaylistCheckVO getPlaylistByPlaylistID(int playlistID);
 	
 	public List<PlaylistCheckVO> getAllPlaylist();
 }

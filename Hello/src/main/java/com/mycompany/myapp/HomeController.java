@@ -101,7 +101,7 @@ public class HomeController {
 		model.addAttribute("playlistCheck", playlistcheckService.getAllPlaylist());
 		
 		
-		return "showVideo5";
+		return "showVideo4";
 	}
 	
 	@ResponseBody
@@ -244,7 +244,7 @@ public class HomeController {
 		else
 			System.out.println("데이터 업데이트 성공!!!");
 		return "redirect:/";
-	}*/
+	}
 	
 	@RequestMapping(value = "/tothumbnail", method = RequestMethod.POST)
 	@ResponseBody
@@ -267,7 +267,7 @@ public class HomeController {
 		}
 			
 		return playlistService.getVideoList(pvo); // 이것이 ajax 성공시 파라미터로 들어가는구만!!
-	}
+	}*/
 	
 	@RequestMapping(value = "/toattendance", method = RequestMethod.POST)
 	@ResponseBody

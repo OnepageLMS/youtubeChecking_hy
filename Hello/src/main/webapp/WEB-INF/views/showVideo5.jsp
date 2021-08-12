@@ -23,7 +23,7 @@
 			display: inline-block; 
 		    border: 1px solid green;
 		    padding: 10px;
-		    
+		    margin-left: 1%;
 		    box-sizing: border-box;
 		}
 
@@ -59,9 +59,11 @@
 	        </div>
         </div>
        
-         <form action = "attendance" method="post">
- 			<button type = "submit"> 출석확인 </button>
+         <form action = "../../contentList/<%= request.getAttribute("classID") %>" method="get">
+ 			<button type = "submit"> 나가기 </button>
  		</form>
+ 		
+ 		
  		
     <script type="text/javascript">
     	
@@ -101,12 +103,19 @@
 		var playlistID;
 		var ori_index =0;
  		
+		var playlistcheck
 	 	$(function(){ //db로부터 정보 불러오기!
 	 		
+	 		playlistcheck = JSON.parse('${playlistCheck}');
+	 		console.log("/ " +playlistcheck[0].playlistID);
+	 		
 	 		$.ajax({
-	 			  url : "../ajaxTest.do",
+	 			  url : "../../ajaxTest.do",
 	 			  type : "post",
 	 			  async : false,
+	 			  data : {	
+	 				 playlistID : playlistcheck[0].playlistID
+	 			  },
 	 			  success : function(data) {
 	 				 playlist = data;
 	 				 playlist_length = Object.keys(playlist).length;
@@ -201,25 +210,42 @@
 	 	}
 	 	
 	 	function move() {
-         	var playlistcheck;
+         	var percentage;
  			
  			$.ajax({
-	 			  url : "../ajaxTest2.do",
+	 			  url : "../../ajaxTest2.do",
 	 			  type : "post",
 	 			  async : false,
+	 			  data : {	
+	 				 playlistID : playlistcheck[0].playlistID
+	 			  },
 	 			  success : function(data) {
-	 				 playlistcheck = data;
-	 				 playlistcheck_length = Object.keys(playlist).length;
+	 				 if(data.length == 0){ //null값을 리턴받았을 때 
+	 					console.log("null임");
+	 				 	//이 때 playlistCheck테이블에 row 추가해주기
+	 				 }
+	 				 else{
+	 					console.log("null이 아닌데??");
+	 					percentage = data;
+		 				percentage_length = Object.keys(playlist).length;
+	 				 }
+	 				
 	 			  },
 	 			  error : function() {
 	 			  	alert("error");
 	 			  }
 	 		})
 	 		
-	 		
+	 		//console.log("move인데요 " + percentage[0].totalWatched );
           
              var elem = document.getElementById("myBar");
-             var width = parseInt(playlistcheck[0].totalWatched / total_runningtime * 100);
+             if(!percentage){ //null값을 리턴받았을 때, 즉, totalWatched에 대한정보가 없으면 아직 안봤다는 이야기이기 때문에 0으로 표시한다.
+            	 var width = parseInt(0 / total_runningtime * 100);
+             }
+             else{
+            	 var width = parseInt(percentage.totalWatched / total_runningtime * 100);
+            	 //배열의 형태가 아니라 VO하나만 리턴받는거라서 인덱스 표시하지 않는다.
+             }
              
              elem.style.width = width + "%";
              elem.innerHTML = width + "%";
@@ -229,8 +255,7 @@
 	 	
         function viewVideo(videoID, id, startTime, endTime, index) { // 선택한 비디오 아이디를 가지고 플레이어 띄우기
  			start_s = startTime;
- 			//console.log("timer : " +time + " parseInt(arr[index].timer) : " +(arr[index].timer));
- 			//console.log("timer : " + (db_timer + parseInt(arr[ori_index].timer)));
+        
  			$('.videoTitle').text(playlist[ori_index].newTitle);
  			if (confirm("다른 영상으로 변경하시겠습니까? ") == true){    //확인
  				flag = 0;
@@ -241,7 +266,7 @@
 				console.log("db_timer:" +db_timer);
 				$.ajax({
 					'type' : "post",
-					'url' : "changevideo",
+					'url' : "../../changevideo",
 					'data' : {
 								lastTime : player.getCurrentTime(),
 								studentID : studentEmail,
@@ -306,7 +331,7 @@
             $('.videoTitle').text(playlist[ori_index].newTitle);
             $.ajax({
 				'type' : "post",
-				'url' : "videocheck",
+				'url' : "../../videocheck",
 				'data' : {
 							studentID : studentEmail, //학생ID(email)
 							videoID : playlist[0].id //현재 재생중인 (플레이리스트 첫번째 영상의 ) id
@@ -335,7 +360,7 @@
         	/*영상이 시작하기 전에 이전에 봤던 곳부터 이어봤는지 물어보도록!*/
         	if(event.data == -1) {
         		console.log("flag : " +flag+ " /watchedFlag : "+watchedFlag);
-				if(flag == 0 || watchedFlag != 1){ //아직 끝까지 안봤을 때만 물어보기! //처음볼때는 물어보지 않기
+				if(flag == 0 && watchedFlag != 1){ //아직 끝까지 안봤을 때만 물어보기! //처음볼때는 물어보지 않기
         			
         			if (confirm("이어서 시청하시겠습니까?") == true){    
         				flag = 1;
@@ -409,7 +434,7 @@
         		
         		$.ajax({
 					'type' : "post",
-					'url' : "changewatch",
+					'url' : "../../changewatch",
 					'data' : {
 								lastTime : player.getDuration(), //lastTime에 영상의 마지막 시간을 넣어주기
 								studentID : studentEmail, //studentID 그대로
