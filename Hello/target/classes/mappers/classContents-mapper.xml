@@ -29,7 +29,7 @@
 	
 	<select id="getWeekClassContents" resultType="ClassContentsVO">
 		select * 
-		from lms_classPlaylist join Video on lms_classPlaylist.playlistID = Video.playlistID
+		from lms_classPlaylist join lms_playlist on lms_classPlaylist.playlistID = lms_playlist.playlistID
 		where classID=#{classID} AND published =1 order by week, day, daySeq, seq
 
 	</select>

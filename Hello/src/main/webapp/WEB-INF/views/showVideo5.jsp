@@ -84,6 +84,7 @@
         var playlist;
 	 	var playlist_length;
         var studentEmail = ${list.studentEmail};
+        var classID = ${classID};
         
         var playerState;
         var time = 0;
@@ -107,8 +108,7 @@
 	 	$(function(){ //db로부터 정보 불러오기!
 	 		
 	 		playlistcheck = JSON.parse('${playlistCheck}');
-	 		console.log("/ " +playlistcheck[0].playlistID);
-	 		
+	 	
 	 		$.ajax({
 	 			  url : "../../ajaxTest.do",
 	 			  type : "post",
@@ -117,6 +117,8 @@
 	 				 playlistID : playlistcheck[0].playlistID
 	 			  },
 	 			  success : function(data) {
+	 				 //totalVideo  = ${totalVideo};
+	 				  //console.log("totalVideo : " + totalVideo);
 	 				 playlist = data;
 	 				 playlist_length = Object.keys(playlist).length;
 	 			  },
@@ -219,18 +221,41 @@
 	 			  data : {	
 	 				 playlistID : playlistcheck[0].playlistID
 	 			  },
-	 			  success : function(data) {
-	 				 if(data.length == 0){ //null값을 리턴받았을 때 
+	 			  success : function(data) { //playlistID에 맞는 플레이리스트 가져오기 -> playlistCheck테이블에서
+	 				 
+	 				 if(data.length == 0){ //null값을 리턴받았을 때 , 즉 아직 플레이리스트를 실행하지 않아서 playlsitCheck에 대한 정보가 없을 때
 	 					console.log("null임");
 	 				 	//이 때 playlistCheck테이블에 row 추가해주기
-	 				 }
+	 				 	
+		 				 	$.ajax({ //null일 때 totalWatched에 insert해주기
+		 				 	
+				 			  url : "../../ajaxTest3.do",
+				 			  type : "post",
+				 			  async : false,
+				 			  data : {	
+				 				 studentID : studentEmail,
+				 				 playlistID : playlistcheck[0].playlistID,
+				 				 classID : classID,
+				 				 totalVideo : playlist_length,
+				 				 totalWatched : 0.00
+				 			  },
+				 			  success : function(data) {
+				 				console.log(data);
+				 				percentage.totalWatched = 0;
+				 			  },
+				 			  error : function() {
+				 			  	alert("error");
+				 			  }
+				 		 })
+	 				}
+	 				 
 	 				 else{
 	 					console.log("null이 아닌데??");
 	 					percentage = data;
 		 				percentage_length = Object.keys(playlist).length;
-	 				 }
+	 				}
 	 				
-	 			  },
+	 		},
 	 			  error : function() {
 	 			  	alert("error");
 	 			  }

@@ -9,7 +9,7 @@ public class PlaylistCheckVO  {
 		private int playlistID;
 		private int classID;
 		private int totalVideo;
-		private int totalWatched;
+		private double totalWatched;
 		private Date regdate;
 		private Date updateWatched;
 		
@@ -51,10 +51,10 @@ public class PlaylistCheckVO  {
 		}
 		
 		
-		public int getTotalWatched() {
+		public double getTotalWatched() {
 			return totalWatched;
 		}
-		public void setTotalWatche(int totalWatched) {
+		public void setTotalWatched(double totalWatched) {
 			this.totalWatched = totalWatched;
 		}
 		

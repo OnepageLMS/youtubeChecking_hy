@@ -41,6 +41,10 @@ public class PlaylistCheckServiceImpl implements PlaylistCheckService{
 		return playlistcheckDAO.getPlaylistByPlaylistID(playlistID);
 	}
 	
+	@Override
+	public int getTotalVideo(int playlistID) {
+		return playlistcheckDAO.getTotalVideo(playlistID);
+	}
 	
 	@Override
 	public List<PlaylistCheckVO> getAllPlaylist(){

@@ -16,7 +16,7 @@ public class ClassContentsVO {
 	private Date endDate;
 	private Date modDate;
 	
-	private String youtubeID;
+	private String thumbnailID;
 	private String Vtitle;
 	private String newTitle;
 	private int seq;
@@ -94,11 +94,11 @@ public class ClassContentsVO {
 		this.modDate = modDate;
 	}
 	
-	public String getYoutubeID() {
-		return youtubeID;
+	public String getThumbnailID() {
+		return thumbnailID;
 	}
-	public void setYoutubeID(String youtubeID) {
-		this.youtubeID = youtubeID;
+	public void setThumbnailID(String thumbnailID) {
+		this.thumbnailID = thumbnailID;
 	}
 	
 	public String getVTitle() {

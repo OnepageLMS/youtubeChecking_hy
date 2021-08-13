@@ -46,6 +46,7 @@
 	var playlist;
 	var total_runningtime;
 	$(document).ready(function(){
+		
 		var allContents = JSON.parse('${allContents}');
 		//console.log(allContents.length);
 		var weekContents = JSON.parse('${weekContents}');
@@ -59,11 +60,11 @@
 		console.log("classID는 다음과 같습니다. " + classInfo);
 		//classInfo를 받아와서 이거를 detail페이지로 넘겨주자.?	
 		console.log("length : " +weekContents.length );
-	 		
+		var week;
 	 		for(var i=0; i<weekContents.length; i++){
-	 			console.log("youtubeID : " +weekContents[i].youtubeID + " / playlistID : " + weekContents[i].playlistID + " week " +  weekContents[i].week + " day " +  weekContents[i].day + " / title : " + weekContents[i].title );
-				var thumbnail = '<img src="https://img.youtube.com/vi/' + weekContents[i].youtubeID + '/1.jpg">';
-				var week = weekContents[i].week -1 ;
+	 			console.log("youtubeID : " +weekContents[i].thumbnailID + " / playlistID : " + weekContents[i].playlistID + " week " +  weekContents[i].week + " day " +  weekContents[i].day + " / title : " + weekContents[i].title );
+				var thumbnail = '<img src="https://img.youtube.com/vi/' + weekContents[i].thumbnailID + '/1.jpg">';
+					week = weekContents[i].week -1 ;
 				var day = weekContents[i].day - 1;
 				var date = new Date(weekContents[i].startDate.time); //timestamp -> actural time
 				console.log("date : "+ date);
@@ -80,7 +81,7 @@
 					content.append("<div  class='content' seq='" + weekContents[i].daySeq + "' onclick=" + onclickDetail + " style='cursor: pointer;'>"
 							+ '<p class="title"> <b>' +  (weekContents[i].daySeq+1) + " " + weekContents[i].title + '</b>' + '</p>'
 							+ '<p class="startDate">' + "시작일: " + startDate + '</p>'
-						+ thumbnail + "youtubeID : " +weekContents[i].youtubeID +  " week " +  weekContents[i].week 
+						+ thumbnail + "youtubeID : " +weekContents[i].thumbnailID +  " week " +  weekContents[i].week 
 						+ " day " + weekContents[i].day +  " seq " + weekContents[i].seq 
 						+ " playlistID " + weekContents[i].playlistID + "<div id='myProgress'><div id='myBar'></div></div> </div>");
 					}
@@ -91,6 +92,7 @@
 				//클릭했을 때 ajax를 통해서 playlistID를 넘겨주기 (x) -> 페이지 이동이 일어나야하는데
 				//
 			}
+	 		
 	 		
 	 		for(var j=0; j<playlist.length; j++){
 	 			total_runningtime += parseInt(playlist[j].duration);
@@ -145,12 +147,24 @@
 		return result;
 	}
 	
+	function toggle(e){
+		var idx = $(e).attr('week');
+		console.log("idx : " + idx);
+		$(e).on("click", function(){
+			$('.week:eq(' + (idx-1) + ')').toggle("1000", "linear");
+		});
+	}
+	
 </script>
 <body>
+
+	
+	
+	
 	<div class="contents" classID="${classInfo.id}">
 		<c:forEach var="i" begin="1" end="${classInfo.weeks}">
-			<div class="week" week="${i}">
-				<h3>${i}주차</h3>
+			<div class="week" week="${i}" onclick ="toggle(this)">
+				<h3 >${i}주차</h3>
 				<c:forEach var="j" begin="1" end="${classInfo.days}">
 					<div class="day" day="${j}">${j} 차시
 						

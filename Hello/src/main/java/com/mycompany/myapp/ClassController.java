@@ -55,6 +55,7 @@ public class ClassController{
 		model.addAttribute("classInfo", classesService.getClass(classID)); 
 		model.addAttribute("allContents", JSONArray.fromObject(classContentsService.getAllClassContents(classID)));
 		model.addAttribute("weekContents", JSONArray.fromObject(classContentsService.getWeekClassContents(ccvo)));
+		System.out.println(classContentsService.getWeekClassContents(ccvo).get(0).getThumbnailID());
 		
 		PlaylistVO pvo = new PlaylistVO();
 		model.addAttribute("playlist", JSONArray.fromObject(playlistService.getVideoList(pvo))); 
@@ -88,11 +89,14 @@ public class ClassController{
 	
 	@ResponseBody
 	@RequestMapping(value = "/ajaxTest.do", method = RequestMethod.POST)
-	public List<PlaylistVO> ajaxTest(HttpServletRequest request) throws Exception {
+	public List<PlaylistVO> ajaxTest(HttpServletRequest request, Model model) throws Exception {
 		int playlistID = Integer.parseInt(request.getParameter("playlistID"));
 	    PlaylistVO pvo = new PlaylistVO();
 	    pvo.setPlaylistID(playlistID);
-	  
+	    
+	    //model.addAttribute("totalVideo", playlistcheckService.getTotalVideo(playlistID));
+	    //System.out.println("totalVideo 가 잘 나오니? " + playlistcheckService.getTotalVideo(playlistID));
+	    
 	    return playlistService.getVideoList(pvo);
 	}
 	
@@ -100,14 +104,42 @@ public class ClassController{
 	@RequestMapping(value = "/ajaxTest2.do", method = RequestMethod.POST)
 	public PlaylistCheckVO ajaxTest2(HttpServletRequest request) throws Exception {
 		int playlistID = Integer.parseInt(request.getParameter("playlistID"));
-	    System.out.println(playlistcheckService.getPlaylistByPlaylistID(playlistID));
-	   
+	    //System.out.println(playlistcheckService.getPlaylistByPlaylistID(playlistID));
+	    //PlaylistCheckVO pcvo = new PlaylistCheckVO();
+	    //pcvo.setPlaylistID(playlistID);
+	    
 	  if(playlistcheckService.getPlaylistByPlaylistID(playlistID) != null) {
 		  System.out.println("null아니니까");
 		  return  playlistcheckService.getPlaylistByPlaylistID(playlistID);
 	  }
 	  else 
 		  return null;
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/ajaxTest3.do", method = RequestMethod.POST)
+	public String ajaxTest3(HttpServletRequest request) throws Exception {
+		int studentID = Integer.parseInt(request.getParameter("studentID"));
+		int playlistID = Integer.parseInt(request.getParameter("playlistID"));
+		int classID = Integer.parseInt(request.getParameter("classID"));
+		int totalVideo = Integer.parseInt(request.getParameter("totalVideo"));
+		double totalWatched = 0.00;
+		
+		PlaylistCheckVO pcvo = new PlaylistCheckVO();
+		
+		pcvo.setStudentID(studentID);
+		pcvo.setPlaylistID(playlistID);
+		pcvo.setClassID(classID);
+		pcvo.setTotalVideo(totalVideo);
+		pcvo.setTotalWatched(totalWatched);
+		
+		if (playlistcheckService.insertPlaylist(pcvo) == 0) {
+			System.out.println("실패");
+			return "error";
+		}
+		else {
+			return "Success";
+		}
 	}
 	
 	@RequestMapping(value = "/videocheck", method = RequestMethod.POST)
