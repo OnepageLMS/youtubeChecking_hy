@@ -88,7 +88,7 @@
 				//$("#weekContents").append(thumbnail +'<div> ' + weekContents[j].newTitle + '</div>');
 				//이제 클릭했을 때 해당하는 플레이리스트가 띄워지도록!
 				//클릭했을 때 ajax를 통해서 playlistID를 넘겨주기 (x) -> 페이지 이동이 일어나야하는데
-				//
+				//깃헙머지
 			}
 	 		
 	 		
