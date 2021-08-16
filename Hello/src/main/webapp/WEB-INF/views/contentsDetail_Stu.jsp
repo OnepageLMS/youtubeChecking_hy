@@ -107,9 +107,7 @@
 	 	$(function(){ //db로부터 정보 불러오기!
 	 		
 	 		playlistcheck = JSON.parse('${playlistCheck}');
-	 		//console.log("playlistID를 보기 위함! - " +  playlistcheck[0].playlistID);
-		  	 console.log("id를 보기 위함! - " + playlistcheck[0].id);
-		  	//console.log("id를 보기 위함! - " + playlistcheck[1].id);
+	 	
 	 		$.ajax({ //선택된 playlistID에 맞는 영상들의 정보를 가져오기 위한 ajax 
 	 			  url : "../../../ajaxTest.do",
 	 			  type : "post",
@@ -174,11 +172,11 @@
 	 			
 	 			if(playlist[i].watched == 1){ //끝까지 다 본 영상임을 표시하는 코드
 	 				$("#get_view").append(thumbnail + playlist[i].newTitle + '<div style = "background-color: #287ebf; width = auto" onclick="viewVideo(\'' +playlist[i].youtubeID.toString() + '\'' + ',' + playlist[i].id + ',' 
-		 					+ playlist[i].start_s + ',' + playlist[i].end_s +  ',' + i + ')" >' +show_th + ":" + show_tm + ":" + show_ts + '</div>' );
+		 					+ playlist[i].start_s + ',' + playlist[i].end_s +  ',' + i + ')" >' +show_th + ":" + show_tm + ":" + show_ts + " /seq : " + playlist[i].seq+'</div>' );
 	 			}
 	 			else{ //끝까지 본 영상이 아닐 경우
 	 				$("#get_view").append(thumbnail + playlist[i].newTitle + '<div onclick="viewVideo(\'' +playlist[i].youtubeID.toString() + '\'' + ',' + playlist[i].id + ',' 
-		 					+ playlist[i].start_s + ',' + playlist[i].end_s +  ',' + i + ')" >' +show_th + ":" + show_tm + ":" + show_ts + '</div>' );
+		 					+ playlist[i].start_s + ',' + playlist[i].end_s +  ',' + i + ')" >' +show_th + ":" + show_tm + ":" + show_ts + " /seq : " + playlist[i].seq+ '</div>' );
 	 			}
 	 			
 	 			total_runningtime += parseInt(playlist[i].duration);
@@ -224,7 +222,6 @@
 	 				 	//이 때 playlistCheck테이블에 row 추가해주기
 	 				 	
 		 				 	$.ajax({ //null일 때 totalWatched에 insert해주기
-		 				 	
 				 			  url : "../../../ajaxTest3.do",
 				 			  type : "post",
 				 			  async : false,

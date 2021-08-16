@@ -8,15 +8,8 @@
 	</insert>
 	
 	<select id="getVideoList" resultType="VideoVO">
-		select * from (
-			select * from Video left join videocheck on Video.id = videocheck.videoID
-			where Video.playlistID=#{playlistID} 
-		)as a
-		union
-		select * from (
-			select * from Video right join videocheck on Video.id = videocheck.videoID
-			where Video.playlistID=#{playlistID} 
-		)as b
+		select * from Video left join videocheck on Video.id = videocheck.videoID
+		where Video.playlistID=#{playlistID} 
 		order by seq ASC
 	</select>
 
