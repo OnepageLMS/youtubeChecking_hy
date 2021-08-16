@@ -117,8 +117,6 @@
 	 				 playlistID : playlistcheck[0].playlistID
 	 			  },
 	 			  success : function(data) {
-	 				 //totalVideo  = ${totalVideo};
-	 				  //console.log("totalVideo : " + totalVideo);
 	 				 playlist = data;
 	 				 playlist_length = Object.keys(playlist).length;
 	 			  },
