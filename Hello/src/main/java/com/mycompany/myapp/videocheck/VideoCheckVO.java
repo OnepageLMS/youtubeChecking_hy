@@ -4,7 +4,7 @@ import java.sql.Date;
 
 //import java.math.BigDecimal;
 
-public class VideoVO {
+public class VideoCheckVO {
 	private int id;
 	private int videoID;
 	private int videocheckPlaylistID;

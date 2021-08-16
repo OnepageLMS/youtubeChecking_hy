@@ -14,8 +14,7 @@
 	<style>
 		
 		.first {
-			float: left;
-		   
+			float: left;	   
 		    box-sizing: border-box;
 		}
 		
@@ -23,7 +22,7 @@
 			display: inline-block; 
 		    border: 1px solid green;
 		    padding: 10px;
-		    
+		    margin-left: 1%;
 		    box-sizing: border-box;
 		}
 
@@ -44,7 +43,7 @@
 		<div>
 			<div class="first">
 				<p class="videoTitle"></p>
-	    		<div id="gangnamStyleIframe"></div>
+	    		<div id="onepageLMS"></div>
 	    		<div id='timerBox' class="timerBox">
 					<div id="time" class="time">00:00:00</div>
 				</div>
@@ -59,9 +58,11 @@
 	        </div>
         </div>
        
-         <form action = "attendance" method="post">
- 			<button type = "submit"> 출석확인 </button>
+         <form action = "../../contentList/<%= request.getAttribute("classID") %>" method="get">
+ 			<button type = "submit"> 나가기 </button>
  		</form>
+ 		
+ 		
  		
     <script type="text/javascript">
     	
@@ -77,12 +78,12 @@
          * 페이지 로드 시 표시할 플레이어 개체를 만들어야 한다.
          This function creates an <iFrame> after the API code downloads.
          */
-         
+        //
         var player;
         var playlist;
-        var playlistcheck;
 	 	var playlist_length;
         var studentEmail = ${list.studentEmail};
+        var classID = ${classID};
         
         var playerState;
         var time = 0;
@@ -102,18 +103,18 @@
 		var playlistID;
 		var ori_index =0;
  		
+		var playlistcheck
 	 	$(function(){ //db로부터 정보 불러오기!
 	 		
-	 		//playlist = JSON.parse('${playlist}');
-			//console.log(playlist);
-			//playlistcheck = JSON.parse('${playlistCheck}');
-			//console.log(playlistcheck);
-			//console.log("playlistCheck : " +playlistCheck);
-			
-			$.ajax({
-	 			  url : "ajaxTest.do",
+	 		playlistcheck = JSON.parse('${playlistCheck}');
+	 	
+	 		$.ajax({ //선택된 playlistID에 맞는 영상들의 정보를 가져오기 위한 ajax 
+	 			  url : "../../ajaxTest.do",
 	 			  type : "post",
 	 			  async : false,
+	 			  data : {	
+	 				 playlistID : playlistcheck[0].playlistID
+	 			  },
 	 			  success : function(data) {
 	 				 playlist = data;
 	 				 playlist_length = Object.keys(playlist).length;
@@ -122,10 +123,6 @@
 	 			  	alert("error");
 	 			  }
 	 		})
-	 		
-			
-	 		
-	 		
 	 		
 	 		lastVideo = playlist[0].id;
 	 		myThumbnail();
@@ -138,9 +135,10 @@
 	 	function myThumbnail(){
 	 		
 	 		for(var i=0; i<playlist_length; i++){
-	 			var show_min = Math.floor((parseInt(playlist[i].end_s) - parseInt(playlist[i].start_s))/60);
+	 			//영상 하나하나의 러닝타임을 구하는 코드
+	 			var show_min = Math.floor(parseInt(playlist[i].duration)/60);
 		        var show_hour = Math.floor(show_min/60);
-		        var show_sec = (parseInt(playlist[i].end_s) - parseInt(playlist[i].start_s))%60;
+		        var show_sec = parseInt(playlist[i].duration)%60;
 		        show_min = show_min%60;
 		        
 		        var show_th = show_hour;
@@ -158,7 +156,7 @@
 		        }
 		        
 	 			var thumbnail = '<img src="https://img.youtube.com/vi/' + playlist[i].youtubeID + '/1.jpg">';
-	 			console.log("thumbnail : " +thumbnail);
+	 			
 	 			var newTitle = playlist[i].newTitle;
 	 			var title = playlist[i].title;
 	 			
@@ -172,23 +170,19 @@
 	 				playlist[i].newTitle = (playlist[i].newTitle).substring(0, 45) + " ..."; 
 				}
 	 			
-	 			//document.getElementById("gangnamStyleIframe").innerText = newTitle;
-	 			//$('.videoTitle').text(newTitle);
-	 			
-	 			if(playlist[i].watched == 1){
+	 			if(playlist[i].watched == 1){ //끝까지 다 본 영상임을 표시하는 코드
 	 				$("#get_view").append(thumbnail + playlist[i].newTitle + '<div style = "background-color: #287ebf; width = auto" onclick="viewVideo(\'' +playlist[i].youtubeID.toString() + '\'' + ',' + playlist[i].id + ',' 
-		 					+ playlist[i].start_s + ',' + playlist[i].end_s +  ',' + i + ')" >' +show_th + ":" + show_tm + ":" + show_ts + "//" +  (parseInt(playlist[i].end_s) - parseInt(playlist[i].start_s)) +
-		 					'</div>' );
+		 					+ playlist[i].start_s + ',' + playlist[i].end_s +  ',' + i + ')" >' +show_th + ":" + show_tm + ":" + show_ts + '</div>' );
 	 			}
-	 			else{
+	 			else{ //끝까지 본 영상이 아닐 경우
 	 				$("#get_view").append(thumbnail + playlist[i].newTitle + '<div onclick="viewVideo(\'' +playlist[i].youtubeID.toString() + '\'' + ',' + playlist[i].id + ',' 
-		 					+ playlist[i].start_s + ',' + playlist[i].end_s +  ',' + i + ')" >' +show_th + ":" + show_tm + ":" + show_ts + "//" +  (parseInt(playlist[i].end_s) - parseInt(playlist[i].start_s)) +
-		 					'</div>' );
+		 					+ playlist[i].start_s + ',' + playlist[i].end_s +  ',' + i + ')" >' +show_th + ":" + show_tm + ":" + show_ts + '</div>' );
 	 			}
 	 			
 	 			total_runningtime += parseInt(playlist[i].duration);
 	 		}
 	 		
+	 		//playlist 내의 영상 시간 총 길이
 	 		var total_min = Math.floor(total_runningtime/60);
 	        var total_hour = Math.floor(total_min/60);
 	        var total_sec = total_runningtime%60;
@@ -211,26 +205,63 @@
 	        $("#total_runningtime").append('<div> total runningTime ' +total_th + ":" + total_tm + ":" + total_ts + " / " +total_runningtime+ '</div>');
 	 	}
 	 	
-	 	function move() {
-	 		
-	 		$.ajax({
-	 			  url : "ajaxTest2.do",
+	 	function move() { //progress bar 보여주기
+         	var percentage;
+ 			
+ 			$.ajax({
+	 			  url : "../../ajaxTest2.do",
 	 			  type : "post",
 	 			  async : false,
-	 			  success : function(data) {
-	 				 playlistcheck = data;
-	 				 playlistcheck_length = Object.keys(playlist).length;
+	 			  data : {	
+	 				 playlistID : playlistcheck[0].playlistID
 	 			  },
-	 			  error : function() {
+	 			  success : function(data) { //playlistID에 맞는 플레이리스트 가져오기 -> playlistCheck테이블에서
+	 				 
+	 				 if(data.length == 0){ //null값을 리턴받았을 때 , 즉 아직 플레이리스트를 실행하지 않아서 playlsitCheck에 대한 정보가 없을 때
+	 				 	//이 때 playlistCheck테이블에 row 추가해주기
+	 				 	
+		 				 	$.ajax({ //null일 때 totalWatched에 insert해주기
+		 				 	
+				 			  url : "../../ajaxTest3.do",
+				 			  type : "post",
+				 			  async : false,
+				 			  data : {	
+				 				 studentID : studentEmail,
+				 				 playlistID : playlistcheck[0].playlistID,
+				 				 classID : classID,
+				 				 totalVideo : playlist_length,
+				 				 totalWatched : 0.00
+				 			  },
+				 			  success : function(data) {
+				 				console.log(data);
+				 				percentage.totalWatched = 0;
+				 			  },
+				 			  error : function() {
+				 			  	alert("error");
+				 			  }
+				 		 })
+	 				}
+	 				 
+	 				 else{
+	 					console.log("null이 아닌데??");
+	 					percentage = data;
+		 				percentage_length = Object.keys(playlist).length;
+	 				}
+	 				
+	 			},
+	 			error : function() {
 	 			  	alert("error");
-	 			  }
+	 			}
 	 		})
 	 		
              var elem = document.getElementById("myBar");
-             var width = parseInt(playlistcheck[0].totalWatched / total_runningtime * 100);
-             //여기서 0번째가 아니라 playlistID와 같은 친구를 ㅔ뎌와야함.
-             //그래서 getAllPlaylist를 하면 안될듯!
-             console.log("move : "+  playlistcheck[0].totalWatched );
+             if(!percentage){ //null값을 리턴받았을 때, 즉, totalWatched에 대한정보가 없으면 아직 안봤다는 이야기이기 때문에 0으로 표시한다.
+            	 var width = parseInt(0 / total_runningtime * 100);
+             }
+             else{
+            	 var width = parseInt(percentage.totalWatched / total_runningtime * 100);
+            	 //배열의 형태가 아니라 VO하나만 리턴받는거라서 인덱스 표시하지 않는다.
+             }
              
              elem.style.width = width + "%";
              elem.innerHTML = width + "%";
@@ -240,19 +271,18 @@
 	 	
         function viewVideo(videoID, id, startTime, endTime, index) { // 선택한 비디오 아이디를 가지고 플레이어 띄우기
  			start_s = startTime;
- 			//console.log("timer : " +time + " parseInt(arr[index].timer) : " +(arr[index].timer));
- 			//console.log("timer : " + (db_timer + parseInt(arr[ori_index].timer)));
- 			$('.videoTitle').text(playlist[ori_index].newTitle);
+        
+ 			$('.videoTitle').text(playlist[ori_index].newTitle); //비디오 제목 정해두기
  			if (confirm("다른 영상으로 변경하시겠습니까? ") == true){    //확인
  				flag = 0;
  	 			time = 0;
  	 			
  	 			clearInterval(timer); //현재 재생중인 timer를 중지하지 않고, 새로운 youtube를 실행해서 timer 두개가 실행되는 현상으로, 새로운 유튜브를 실행할 때 타이머 중지!
 				//이 전에 db에 lastTime, timer 저장하기 ajax를 써봅시다!
-				console.log("db_timer:" +db_timer);
-				$.ajax({
+				
+				$.ajax({ //다른 영상으로 변경할 때 현재 보고있던 영상에 대한 정보를 db에업데이트 시켜둔다.
 					'type' : "post",
-					'url' : "changevideo",
+					'url' : "../../changevideo",
 					'data' : {
 								lastTime : player.getCurrentTime(),
 								studentID : studentEmail,
@@ -261,10 +291,8 @@
 								timer : db_timer + parseInt(playlist[ori_index].timer)
 					},
 					success : function(data){
-						//정보 잘 보냈다면 이것을 실행하라
-						//console.log("now: " +arr[ori_index].timer);
-						lastVideo = id; // **
-						ori_index = index;
+						lastVideo = id; // 보던 비디오 ID에 id를 넣는다
+						ori_index = index; // 원래 인덱스에 index를 넣는다.
 					}, 
 					error : function(err){
 						alert("playlist 추가 실패! : ", err.responseText);
@@ -296,7 +324,7 @@
         
         
         function onYouTubeIframeAPIReady() {
-            player = new YT.Player('gangnamStyleIframe', {
+            player = new YT.Player('onepageLMS', {
                 height: '315',            // <iframe> 태그 지정시 필요없음
                 width: '560',             // <iframe> 태그 지정시 필요없음
                 videoId: playlist[0].youtubeID,
@@ -317,7 +345,7 @@
             $('.videoTitle').text(playlist[ori_index].newTitle);
             $.ajax({
 				'type' : "post",
-				'url' : "videocheck",
+				'url' : "../../videocheck",
 				'data' : {
 							studentID : studentEmail, //학생ID(email)
 							videoID : playlist[0].id //현재 재생중인 (플레이리스트 첫번째 영상의 ) id
@@ -333,7 +361,7 @@
 					
 				}, 
 				error : function(err){
-					alert("playlist 추가 실패! ===========: ", err.responseText);
+					alert("playlist 추가 실패! : ", err.responseText);
 				}
 			});
             console.log('onPlayerReady 마감');
@@ -346,7 +374,7 @@
         	/*영상이 시작하기 전에 이전에 봤던 곳부터 이어봤는지 물어보도록!*/
         	if(event.data == -1) {
         		console.log("flag : " +flag+ " /watchedFlag : "+watchedFlag);
-				if(flag == 0 || watchedFlag != 1){ //아직 끝까지 안봤을 때만 물어보기! //처음볼때는 물어보지 않기
+				if(flag == 0 && watchedFlag != 1){ //아직 끝까지 안봤을 때만 물어보기! //처음볼때는 물어보지 않기
         			
         			if (confirm("이어서 시청하시겠습니까?") == true){    
         				flag = 1;
@@ -354,7 +382,6 @@
             		}
             		
             		else{   //취소
-            			//console.log("취소 : " +start);
             			player.seekTo(playlist[ori_index].start_s, true);
             			flag = 1;
             			player.playVideo();
@@ -420,7 +447,7 @@
         		
         		$.ajax({
 					'type' : "post",
-					'url' : "changewatch",
+					'url' : "../../changewatch",
 					'data' : {
 								lastTime : player.getDuration(), //lastTime에 영상의 마지막 시간을 넣어주기
 								studentID : studentEmail, //studentID 그대로

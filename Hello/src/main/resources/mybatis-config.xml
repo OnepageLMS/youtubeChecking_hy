@@ -4,10 +4,10 @@
         
 <configuration>
     <typeAliases>
-        <typeAlias alias="VideoVO" type="com.mycompany.myapp.videocheck.VideoVO" />
-        <typeAlias alias="PlaylistVO" type="com.mycompany.myapp.playlist.PlaylistVO" />
+        <typeAlias alias="VideoCheckVO" type="com.mycompany.myapp.videocheck.VideoCheckVO" />
+        <typeAlias alias="VideoVO" type="com.mycompany.myapp.video.VideoVO" />
         <typeAlias alias="PlaylistCheckVO" type="com.mycompany.myapp.playlistCheck.PlaylistCheckVO" />
         <typeAlias alias="ClassContentsVO" type="com.mycompany.myapp.classContents.ClassContentsVO" />
-        <typeAlias alias="ClassVO" type="com.mycompany.myapp.classes.ClassesVO" />
+        <typeAlias alias="ClassesVO" type="com.mycompany.myapp.classes.ClassesVO" />
     </typeAliases>
 </configuration> 

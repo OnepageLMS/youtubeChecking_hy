@@ -1,45 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-
 <mapper namespace="Video">
-	<insert id="insertTime">
-		insert into videocheck (videoID, videocheckPlaylistID, studentEmail ,lastTime, timer, watched)
+	<insert id="insertVideo">
+		insert into Video(youtubeID, title, start_s, end_s, playlistID)
 		values
-		(#{videoID}, #{videocheckPlaylistID}, #{studentEmail}, #{lastTime}, #{timer}, #{watched})
+		(#{youtubeID}, #{title}, #{start_s}, #{end_s}, #{playlistID})
 	</insert>
 	
-	<update id="updateTime">
-		update videocheck
-		set lastTime=#{lastTime}, timer=#{timer}
-		where studentEmail=#{studentEmail} AND videoID=#{videoID}
-	</update>
-	
-	<update id="updateWatch">
-		update videocheck
-		set lastTime=#{lastTime}, timer=#{timer}, watched=#{watched}
-		where studentEmail=#{studentEmail} AND videoID=#{videoID}
-	</update>
-	
-	<delete id="deleteTime">
-		delete from videocheck where videocheckID=#{videocheckID}
-	</delete>
-	
-	<select id="getTime" resultType="VideoVO">
-		select * 
-		from videocheck 
-		where videocheckID=#{videocheckID}
+	<select id="getVideoList" resultType="VideoVO">
+		select * from (
+			select * from Video left join videocheck on Video.id = videocheck.videoID
+			where Video.playlistID=#{playlistID} 
+		)as a
+		union
+		select * from (
+			select * from Video right join videocheck on Video.id = videocheck.videoID
+			where Video.playlistID=#{playlistID} 
+		)as b
+		order by seq ASC
 	</select>
-	
-	<select id="getTime2" resultType="VideoVO">
-		select *
-		from videocheck
-		where studentEmail=#{studentEmail} AND videoID=#{videoID}
-	</select>
-	
-	<select id="getTimeList" resultType="VideoVO">
-		SELECT * 
-		FROM videocheck order
-		by videocheckID desc
-	</select>
-	
+
 </mapper>

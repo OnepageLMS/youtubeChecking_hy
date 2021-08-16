@@ -18,12 +18,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.mycompany.myapp.classContents.ClassContentsService;
 import com.mycompany.myapp.classContents.ClassContentsVO;
 import com.mycompany.myapp.classes.ClassesService;
-import com.mycompany.myapp.playlist.PlaylistService;
-import com.mycompany.myapp.playlist.PlaylistVO;
 import com.mycompany.myapp.playlistCheck.PlaylistCheckService;
 import com.mycompany.myapp.playlistCheck.PlaylistCheckVO;
-import com.mycompany.myapp.videocheck.VideoService;
-import com.mycompany.myapp.videocheck.VideoVO;
+import com.mycompany.myapp.video.VideoService;
+import com.mycompany.myapp.video.VideoVO;
+import com.mycompany.myapp.videocheck.VideoCheckService;
+import com.mycompany.myapp.videocheck.VideoCheckVO;
 
 import net.sf.json.JSONArray;
 
@@ -37,13 +37,13 @@ public class ClassController{
 	private ClassContentsService classContentsService;
 	
 	@Autowired
-	private PlaylistService playlistService;
+	private VideoService videoService;
 	
 	@Autowired
 	private PlaylistCheckService playlistcheckService;
 	
 	@Autowired
-	private VideoService videoService;
+	private VideoCheckService videoCheckService;
 	
 	@RequestMapping(value = "/contentList/{classID}", method = RequestMethod.GET)
 	public String contentList(@PathVariable("classID") int classID, Model model) {
@@ -55,13 +55,11 @@ public class ClassController{
 		model.addAttribute("classInfo", classesService.getClass(classID)); 
 		model.addAttribute("allContents", JSONArray.fromObject(classContentsService.getAllClassContents(classID)));
 		model.addAttribute("weekContents", JSONArray.fromObject(classContentsService.getWeekClassContents(ccvo)));
-		System.out.println(classContentsService.getWeekClassContents(ccvo).get(0).getThumbnailID());
 		
-		PlaylistVO pvo = new PlaylistVO();
-		model.addAttribute("playlist", JSONArray.fromObject(playlistService.getVideoList(pvo))); 
+		VideoVO pvo = new VideoVO();
+		model.addAttribute("playlist", JSONArray.fromObject(videoService.getVideoList(pvo))); 
 		model.addAttribute("playlistCheck", JSONArray.fromObject(playlistcheckService.getAllPlaylist()));
-		//System.out.println(" //"  +JSONArray.fromObject(classContentsService.getAllClassContents(classID)));
-		return "showClass";
+		return "contentsList_Stu";
 	}
 	
 	
@@ -69,7 +67,7 @@ public class ClassController{
 	public String contentDetail(@PathVariable("id") int id, @PathVariable("classInfo") int classInfo, Model model) {
 		//id : playlistID, classInfo : classID
 		//VideoVO vo = new VideoVO();
-		PlaylistVO pvo = new PlaylistVO();
+		VideoVO pvo = new VideoVO();
 		PlaylistCheckVO pcvo = new PlaylistCheckVO();
 		ClassContentsVO ccvo = new ClassContentsVO();
 		
@@ -78,26 +76,26 @@ public class ClassController{
 		System.out.println("id : " + pcvo.getPlaylistID());
 		
 		model.addAttribute("classID", classInfo);
-		model.addAttribute("list", videoService.getTime(103)); //studentID가 3으로 설정되어있음
+		model.addAttribute("list", videoCheckService.getTime(103)); //studentID가 3으로 설정되어있음
 		//model.addAttribute("playlist", JSONArray.fromObject(playlistService.getVideoList(pvo)));  //Video와 videocheck테이블을 join해서 두 테이블의 정보를 불러오기 위함
 		model.addAttribute("playlistCheck", JSONArray.fromObject(classContentsService.getSamePlaylistID(ccvo))); //선택한 PlaylistID에 맞는 row를 playlistCheck테이블에서 가져오기 위함 , playlistCheck가 아니라 classPlaylistCheck에서 가져와야하거 같은디
 		//System.out.println(JSONArray.fromObject(playlistcheckService.getSamePlaylistID(pcvo)));
 		
-		return "showVideo5";
+		return "contentsDetail_Stu";
 		
 	}
 	
 	@ResponseBody
 	@RequestMapping(value = "/ajaxTest.do", method = RequestMethod.POST)
-	public List<PlaylistVO> ajaxTest(HttpServletRequest request, Model model) throws Exception {
+	public List<VideoVO> ajaxTest(HttpServletRequest request, Model model) throws Exception {
 		int playlistID = Integer.parseInt(request.getParameter("playlistID"));
-	    PlaylistVO pvo = new PlaylistVO();
+	    VideoVO pvo = new VideoVO();
 	    pvo.setPlaylistID(playlistID);
 	    
 	    //model.addAttribute("totalVideo", playlistcheckService.getTotalVideo(playlistID));
 	    //System.out.println("totalVideo 가 잘 나오니? " + playlistcheckService.getTotalVideo(playlistID));
 	    
-	    return playlistService.getVideoList(pvo);
+	    return videoService.getVideoList(pvo);
 	}
 	
 	@ResponseBody
@@ -149,14 +147,14 @@ public class ClassController{
 		String studentID = request.getParameter("studentID");
 		int videoID = Integer.parseInt(request.getParameter("videoID"));
 		
-		VideoVO vo = new VideoVO();
+		VideoCheckVO vo = new VideoCheckVO();
 		
 		
 		vo.setStudentEmail(studentID);
 		vo.setvideoID(videoID);
 		
-		if (videoService.getTime(vo) != null) {
-			map.put(videoService.getTime(vo).getLastTime(), videoService.getTime(vo).getTimer());
+		if (videoCheckService.getTime(vo) != null) {
+			map.put(videoCheckService.getTime(vo).getLastTime(), videoCheckService.getTime(vo).getTimer());
 		}
 		else {
 			System.out.println("처음입니다 !!!");
@@ -167,14 +165,14 @@ public class ClassController{
 	
 	@RequestMapping(value = "/changevideo", method = RequestMethod.POST)
 	@ResponseBody
-	public List<VideoVO> changeVideoOK(HttpServletRequest request) {
+	public List<VideoCheckVO> changeVideoOK(HttpServletRequest request) {
 		double lastTime = Double.parseDouble(request.getParameter("lastTime"));
 		double timer = Double.parseDouble(request.getParameter("timer"));
 		String studentID = request.getParameter("studentID");
 		int videoID = Integer.parseInt(request.getParameter("videoID"));
 		int playlistID = Integer.parseInt(request.getParameter("playlistID"));
 		
-		VideoVO vo = new VideoVO();
+		VideoCheckVO vo = new VideoCheckVO();
 		
 		vo.setLastTime(lastTime);
 		vo.setStudentEmail(studentID);
@@ -182,15 +180,15 @@ public class ClassController{
 		vo.setTimer(timer);
 		vo.setvideocheckPlaylistID(playlistID);
 		
-		if (videoService.updateTime(vo) == 0) {
+		if (videoCheckService.updateTime(vo) == 0) {
 			System.out.println("데이터 업데이트 실패 ");
-			videoService.insertTime(vo);
+			videoCheckService.insertTime(vo);
 
 		}
 		else
 			System.out.println("데이터 업데이트 성공!!!");
 		
-		return videoService.getTimeList();
+		return videoCheckService.getTimeList();
 	}
 	
 	@RequestMapping(value = "/changewatch", method = RequestMethod.POST)
@@ -203,14 +201,14 @@ public class ClassController{
 		int watch = Integer.parseInt(request.getParameter("watch"));
 		int playlistID = Integer.parseInt(request.getParameter("playlistID"));
 		
-		VideoVO vo = new VideoVO();
+		VideoCheckVO vo = new VideoCheckVO();
 		
 		vo.setLastTime(lastTime);
 		vo.setStudentEmail(studentID);
 		vo.setvideoID(videoID);
 		vo.setTimer(timer);
 		
-		VideoVO checkVO = videoService.getTime(vo); //위에서 set한 videoID를 가진 정보를 가져와서 checkVO에 넣는다.
+		VideoCheckVO checkVO = videoCheckService.getTime(vo); //위에서 set한 videoID를 가진 정보를 가져와서 checkVO에 넣는다.
 		vo.setWatched(watch);
 		
 		PlaylistCheckVO pcvo = new PlaylistCheckVO();
@@ -225,9 +223,9 @@ public class ClassController{
 		//이럴때 playlistcheck테이블의 totalWatched업데이트 시켜주기
 		
 		
-		if (videoService.updateWatch(vo) == 0) {
+		if (videoCheckService.updateWatch(vo) == 0) {
 			System.out.println("데이터 업데이트 실패 ======= ");
-			videoService.insertTime(vo);
+			videoCheckService.insertTime(vo);
 
 		}
 		else { //업데이트가 성공하면 

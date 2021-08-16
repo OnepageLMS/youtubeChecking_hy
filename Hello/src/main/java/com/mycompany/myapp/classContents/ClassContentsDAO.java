@@ -14,41 +14,41 @@ public class ClassContentsDAO {
 	SqlSession sqlSession;
 	
 	public int insertContent(ClassContentsVO vo) {
-		int result = sqlSession.insert("ClassContents.insertContent", vo);
+		int result = sqlSession.insert("ClassContents_Stu.insertContent", vo);
 		return result;
 	}
 	
 	public int updateContent(ClassContentsVO vo) {
-		int result = sqlSession.update("ClassContents.updateContent", vo);
+		int result = sqlSession.update("ClassContents_Stu.updateContent", vo);
 		return result;
 	}
 	
 	public int deleteContent(int id) {
-		int result = sqlSession.delete("ClassContents.deleteContent", id);
+		int result = sqlSession.delete("ClassContents_Stu.deleteContent", id);
 		return result;
 	}
 	
 	public ClassContentsVO getOneContent(int id) {
-		ClassContentsVO result = sqlSession.selectOne("ClassContents.getOneContent", id);
+		ClassContentsVO result = sqlSession.selectOne("ClassContents_Stu.getOneContent", id);
 		return result;
 	}
 	
 	public List<ClassContentsVO> getWeekClassContents(ClassContentsVO vo){
-		List<ClassContentsVO> result = sqlSession.selectList("ClassContents.getWeekClassContents", vo);
+		List<ClassContentsVO> result = sqlSession.selectList("ClassContents_Stu.getWeekClassContents", vo);
 		return result;
 	}
 	
 	public ClassContentsVO getSamePlaylistID(ClassContentsVO vo) {
-		return sqlSession.selectOne("ClassContents.getSamePlaylistID", vo);
+		return sqlSession.selectOne("ClassContents_Stu.getSamePlaylistID", vo);
 	}
 	
 	public List<ClassContentsVO> getAllClassContents(int classID){
-		List<ClassContentsVO> result = sqlSession.selectList("ClassContents.getAllClassContents", classID);
+		List<ClassContentsVO> result = sqlSession.selectList("ClassContents_Stu.getAllClassContents", classID);
 		return result;
 	}
 	
 	public int getDaySeq(ClassContentsVO vo) {
-		int result = sqlSession.selectOne("ClassContents.getDaySeq", vo);
+		int result = sqlSession.selectOne("ClassContents_Stu.getDaySeq", vo);
 		return result;
 	}
 }

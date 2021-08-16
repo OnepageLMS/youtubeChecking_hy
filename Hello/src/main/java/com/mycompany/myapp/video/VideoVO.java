@@ -1,8 +1,8 @@
-package com.mycompany.myapp.playlist;
+package com.mycompany.myapp.video;
 
 import java.util.Date;
 
-public class PlaylistVO {
+public class VideoVO {
 	
 		private int id;
 		private String youtubeID;

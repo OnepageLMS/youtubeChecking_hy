@@ -8,7 +8,10 @@
 </head>
 <body>
 
-<button onclick="location.href='login'">google login</button>
+<button onclick="location.href='login'">Teacher</button>
+<button onclick="location.href='class/contentList/1'">Student</button>
+<!-- 나중에는 학생이 join한 class들을 먼저 보여주고, 거기서 선택해서 들어갈 수 있도록하기
+지금은 그냥 임의로 ClassID가 1인 수업으로 들어가고있음! -->
 
 </body>
 </html>
