@@ -17,9 +17,8 @@ public class ClassContentsVO {
 	private Date modDate;
 	
 	private String thumbnailID;
-	private String Vtitle;
-	private String newTitle;
-	private int seq;
+	private int totalVideo;
+	private float totalVideoLength;
 	
 	public int getId() {
 		return id;
@@ -93,32 +92,22 @@ public class ClassContentsVO {
 	public void setModDate(Date modDate) {
 		this.modDate = modDate;
 	}
-	
 	public String getThumbnailID() {
 		return thumbnailID;
 	}
 	public void setThumbnailID(String thumbnailID) {
 		this.thumbnailID = thumbnailID;
 	}
-	
-	public String getVTitle() {
-		return Vtitle;
+	public int getTotalVideo() {
+		return totalVideo;
 	}
-	public void setVTitle(String Vtitle) {
-		this.Vtitle = Vtitle;
+	public void setTotalVideo(int totalVideo) {
+		this.totalVideo = totalVideo;
 	}
-	
-	public String getnewTitle() {
-		return newTitle;
+	public float getTotalVideoLength() {
+		return totalVideoLength;
 	}
-	public void setnewTitle(String newTitle) {
-		this.newTitle = newTitle;
-	}
-	
-	public int getSeq() {
-		return seq;
-	}
-	public void setSeq(int seq) {
-		this.seq = seq;
+	public void setnewTitle(float totalVideoLength) {
+		this.totalVideoLength = totalVideoLength;
 	}
 }

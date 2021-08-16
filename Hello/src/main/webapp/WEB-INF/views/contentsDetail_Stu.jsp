@@ -107,9 +107,11 @@
 	 	$(function(){ //db로부터 정보 불러오기!
 	 		
 	 		playlistcheck = JSON.parse('${playlistCheck}');
-	 	
+	 		//console.log("playlistID를 보기 위함! - " +  playlistcheck[0].playlistID);
+		  	 console.log("id를 보기 위함! - " + playlistcheck[0].id);
+		  	//console.log("id를 보기 위함! - " + playlistcheck[1].id);
 	 		$.ajax({ //선택된 playlistID에 맞는 영상들의 정보를 가져오기 위한 ajax 
-	 			  url : "../../ajaxTest.do",
+	 			  url : "../../../ajaxTest.do",
 	 			  type : "post",
 	 			  async : false,
 	 			  data : {	
@@ -209,11 +211,12 @@
          	var percentage;
  			
  			$.ajax({
-	 			  url : "../../ajaxTest2.do",
+	 			  url : "../../../ajaxTest2.do",
 	 			  type : "post",
 	 			  async : false,
-	 			  data : {	
-	 				 playlistID : playlistcheck[0].playlistID
+	 			  data : {	//하나의 classID내에 같은 PlaylistID를 가진 것들이 여러개 있을 수 있다. 그러니 playlistID뿐만 아니라 
+	 				  playlistID : playlistcheck[0].playlistID,
+	 				  id : playlistcheck[0].id
 	 			  },
 	 			  success : function(data) { //playlistID에 맞는 플레이리스트 가져오기 -> playlistCheck테이블에서
 	 				 
@@ -222,19 +225,20 @@
 	 				 	
 		 				 	$.ajax({ //null일 때 totalWatched에 insert해주기
 		 				 	
-				 			  url : "../../ajaxTest3.do",
+				 			  url : "../../../ajaxTest3.do",
 				 			  type : "post",
 				 			  async : false,
 				 			  data : {	
 				 				 studentID : studentEmail,
 				 				 playlistID : playlistcheck[0].playlistID,
+				 				 classPlaylistID : playlistcheck[0].id,
 				 				 classID : classID,
 				 				 totalVideo : playlist_length,
 				 				 totalWatched : 0.00
 				 			  },
 				 			  success : function(data) {
 				 				console.log(data);
-				 				percentage.totalWatched = 0;
+				 				//percentage.totalWatched = 0;
 				 			  },
 				 			  error : function() {
 				 			  	alert("error");
@@ -259,6 +263,7 @@
             	 var width = parseInt(0 / total_runningtime * 100);
              }
              else{
+            	 console.log("percentage.totalWatched " + percentage.totalWatched );
             	 var width = parseInt(percentage.totalWatched / total_runningtime * 100);
             	 //배열의 형태가 아니라 VO하나만 리턴받는거라서 인덱스 표시하지 않는다.
              }
@@ -282,7 +287,7 @@
 				
 				$.ajax({ //다른 영상으로 변경할 때 현재 보고있던 영상에 대한 정보를 db에업데이트 시켜둔다.
 					'type' : "post",
-					'url' : "../../changevideo",
+					'url' : "../../../changevideo",
 					'data' : {
 								lastTime : player.getCurrentTime(),
 								studentID : studentEmail,
@@ -345,7 +350,7 @@
             $('.videoTitle').text(playlist[ori_index].newTitle);
             $.ajax({
 				'type' : "post",
-				'url' : "../../videocheck",
+				'url' : "../../../videocheck",
 				'data' : {
 							studentID : studentEmail, //학생ID(email)
 							videoID : playlist[0].id //현재 재생중인 (플레이리스트 첫번째 영상의 ) id
@@ -447,7 +452,7 @@
         		
         		$.ajax({
 					'type' : "post",
-					'url' : "../../changewatch",
+					'url' : "../../../changewatch",
 					'data' : {
 								lastTime : player.getDuration(), //lastTime에 영상의 마지막 시간을 넣어주기
 								studentID : studentEmail, //studentID 그대로

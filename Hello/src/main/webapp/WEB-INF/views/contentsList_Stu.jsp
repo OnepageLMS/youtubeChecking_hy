@@ -70,7 +70,7 @@
 				
 				var startDate = date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes();
 				
-				var onclickDetail = "location.href='../contentDetail/" + weekContents[i].playlistID +  "/" +classInfo+  "'";
+				var onclickDetail = "location.href='../contentDetail/" + weekContents[i].playlistID + "/" +weekContents[i].id + "/" +classInfo+  "'";
 				
 				//var content = $('.week:eq(' + week + ')').children('.day:eq(' + day+ ')');
 				var content = $('.day:eq(' + day + ')');
@@ -81,7 +81,7 @@
 							+ '<p class="startDate">' + "시작일: " + startDate + '</p>'
 						+ thumbnail + "youtubeID : " +weekContents[i].thumbnailID +  " week " +  weekContents[i].week 
 						+ " day " + weekContents[i].day +  " seq " + weekContents[i].seq 
-						+ " playlistID " + weekContents[i].playlistID + "<div id='myProgress'><div id='myBar'></div></div> </div>");
+						+ " playlistID " + weekContents[i].playlistID +  " id " + weekContents[i].id + "<div id='myProgress'><div id='myBar'></div></div> </div>");
 					}
 				//}
 				

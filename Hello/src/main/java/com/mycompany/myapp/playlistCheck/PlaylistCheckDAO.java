@@ -37,8 +37,8 @@ public class PlaylistCheckDAO {
 		return sqlSession.selectOne("PlaylistCheck.getPlaylist", id);
 	}
 	
-	public PlaylistCheckVO getPlaylistByPlaylistID(int playlistID) {
-		return sqlSession.selectOne("PlaylistCheck.getPlaylistByPlaylistID", playlistID);
+	public PlaylistCheckVO getPlaylistByPlaylistID(PlaylistCheckVO vo) {
+		return sqlSession.selectOne("PlaylistCheck.getPlaylistByPlaylistID", vo);
 	}
 	
 	public int getTotalVideo(int playlistID) {

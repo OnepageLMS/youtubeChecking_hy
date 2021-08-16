@@ -37,8 +37,8 @@ public class PlaylistCheckServiceImpl implements PlaylistCheckService{
 	}
 	
 	@Override
-	public PlaylistCheckVO getPlaylistByPlaylistID(int playlistID) {
-		return playlistcheckDAO.getPlaylistByPlaylistID(playlistID);
+	public PlaylistCheckVO getPlaylistByPlaylistID(PlaylistCheckVO vo) {
+		return playlistcheckDAO.getPlaylistByPlaylistID(vo);
 	}
 	
 	@Override

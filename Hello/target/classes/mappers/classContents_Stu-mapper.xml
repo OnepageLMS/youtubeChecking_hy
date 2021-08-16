@@ -21,7 +21,7 @@
 	<select id="getSamePlaylistID" resultType="ClassContentsVO">
 		SELECT * 
 		FROM lms_classPlaylist
-		where playlistID = #{playlistID} 
+		where playlistID = #{playlistID} AND id = #{id}
 	</select>
 	
 	<select id="getAllClassContents" resultType="ClassContentsVO">

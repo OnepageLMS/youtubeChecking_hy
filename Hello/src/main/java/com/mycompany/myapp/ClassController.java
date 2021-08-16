@@ -51,7 +51,6 @@ public class ClassController{
 		
 		ClassContentsVO ccvo = new ClassContentsVO();
 		ccvo.setClassID(1); //임의로 1번 class 설정
-		System.out.println("controller인데 " + classesService.getClass(classID).getId());
 		model.addAttribute("classInfo", classesService.getClass(classID)); 
 		model.addAttribute("allContents", JSONArray.fromObject(classContentsService.getAllClassContents(classID)));
 		model.addAttribute("weekContents", JSONArray.fromObject(classContentsService.getWeekClassContents(ccvo)));
@@ -63,23 +62,23 @@ public class ClassController{
 	}
 	
 	
-	@RequestMapping(value = "/contentDetail/{id}/{classInfo}", method = RequestMethod.GET) //class contents 전체 보여주기
-	public String contentDetail(@PathVariable("id") int id, @PathVariable("classInfo") int classInfo, Model model) {
-		//id : playlistID, classInfo : classID
+	@RequestMapping(value = "/contentDetail/{playlistID}/{id}/{classInfo}", method = RequestMethod.GET) //class contents 전체 보여주기
+	public String contentDetail(@PathVariable("playlistID") int playlistID, @PathVariable("id") int id, @PathVariable("classInfo") int classInfo, Model model) {
+		//playlistID : playlistID, id : id (classPlaylist테이블의 id/ 혹시 playlistID가 같은 경우를 대비함), classInfo : classID
 		//VideoVO vo = new VideoVO();
 		VideoVO pvo = new VideoVO();
 		PlaylistCheckVO pcvo = new PlaylistCheckVO();
 		ClassContentsVO ccvo = new ClassContentsVO();
 		
-		pvo.setPlaylistID(id);
-		ccvo.setPlaylistID(id);
-		System.out.println("id : " + pcvo.getPlaylistID());
+		//pvo.setPlaylistID(playlistID);
+		ccvo.setPlaylistID(playlistID);
+		ccvo.setId(id);
+		System.out.println("id : " + ccvo.getId());
 		
 		model.addAttribute("classID", classInfo);
 		model.addAttribute("list", videoCheckService.getTime(103)); //studentID가 3으로 설정되어있음
 		//model.addAttribute("playlist", JSONArray.fromObject(playlistService.getVideoList(pvo)));  //Video와 videocheck테이블을 join해서 두 테이블의 정보를 불러오기 위함
 		model.addAttribute("playlistCheck", JSONArray.fromObject(classContentsService.getSamePlaylistID(ccvo))); //선택한 PlaylistID에 맞는 row를 playlistCheck테이블에서 가져오기 위함 , playlistCheck가 아니라 classPlaylistCheck에서 가져와야하거 같은디
-		//System.out.println(JSONArray.fromObject(playlistcheckService.getSamePlaylistID(pcvo)));
 		
 		return "contentsDetail_Stu";
 		
@@ -102,13 +101,16 @@ public class ClassController{
 	@RequestMapping(value = "/ajaxTest2.do", method = RequestMethod.POST)
 	public PlaylistCheckVO ajaxTest2(HttpServletRequest request) throws Exception {
 		int playlistID = Integer.parseInt(request.getParameter("playlistID"));
-	    //System.out.println(playlistcheckService.getPlaylistByPlaylistID(playlistID));
-	    //PlaylistCheckVO pcvo = new PlaylistCheckVO();
-	    //pcvo.setPlaylistID(playlistID);
-	    
-	  if(playlistcheckService.getPlaylistByPlaylistID(playlistID) != null) {
+		int classPlaylistID = Integer.parseInt(request.getParameter("id"));
+		//System.out.println()
+		
+		PlaylistCheckVO pcvo = new PlaylistCheckVO();
+		pcvo.setPlaylistID(playlistID);
+		pcvo.setClassPlaylistID(classPlaylistID);
+	   
+	  if(playlistcheckService.getPlaylistByPlaylistID(pcvo) != null) {
 		  System.out.println("null아니니까");
-		  return  playlistcheckService.getPlaylistByPlaylistID(playlistID);
+		  return  playlistcheckService.getPlaylistByPlaylistID(pcvo);
 	  }
 	  else 
 		  return null;
@@ -119,6 +121,7 @@ public class ClassController{
 	public String ajaxTest3(HttpServletRequest request) throws Exception {
 		int studentID = Integer.parseInt(request.getParameter("studentID"));
 		int playlistID = Integer.parseInt(request.getParameter("playlistID"));
+		int classPlaylistID = Integer.parseInt(request.getParameter("classPlaylistID"));
 		int classID = Integer.parseInt(request.getParameter("classID"));
 		int totalVideo = Integer.parseInt(request.getParameter("totalVideo"));
 		double totalWatched = 0.00;
@@ -127,6 +130,7 @@ public class ClassController{
 		
 		pcvo.setStudentID(studentID);
 		pcvo.setPlaylistID(playlistID);
+		pcvo.setClassPlaylistID(classPlaylistID);
 		pcvo.setClassID(classID);
 		pcvo.setTotalVideo(totalVideo);
 		pcvo.setTotalWatched(totalWatched);

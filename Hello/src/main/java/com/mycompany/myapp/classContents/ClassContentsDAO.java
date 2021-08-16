@@ -38,8 +38,9 @@ public class ClassContentsDAO {
 		return result;
 	}
 	
-	public ClassContentsVO getSamePlaylistID(ClassContentsVO vo) {
-		return sqlSession.selectOne("ClassContents_Stu.getSamePlaylistID", vo);
+	public List<ClassContentsVO> getSamePlaylistID(ClassContentsVO vo) {
+		List<ClassContentsVO> result = sqlSession.selectList("ClassContents_Stu.getSamePlaylistID", vo);
+		return result;
 	}
 	
 	public List<ClassContentsVO> getAllClassContents(int classID){

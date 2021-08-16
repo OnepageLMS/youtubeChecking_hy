@@ -38,7 +38,7 @@ public class ClassContentsServiceImpl implements ClassContentsService{
 	}
 	
 	@Override
-	public ClassContentsVO getSamePlaylistID(ClassContentsVO vo) {
+	public List<ClassContentsVO> getSamePlaylistID(ClassContentsVO vo) {
 		return classContentsDAO.getSamePlaylistID(vo);
 	}
 	
