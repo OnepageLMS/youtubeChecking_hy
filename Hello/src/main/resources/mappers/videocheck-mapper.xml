@@ -3,9 +3,9 @@
 
 <mapper namespace="VideoCheck">
 	<insert id="insertTime">
-		insert into videocheck (videoID, videocheckPlaylistID, studentEmail ,lastTime, timer, watched)
+		insert into videocheck (id, videoID, playlistID, studentEmail ,lastTime, timer, watched)
 		values
-		(#{videoID}, #{videocheckPlaylistID}, #{studentEmail}, #{lastTime}, #{timer}, #{watched})
+		(#{id}, #{videoID},  #{playlistID}, #{studentEmail}, #{lastTime}, #{timer}, #{watched})
 	</insert>
 	
 	<update id="updateTime">
@@ -21,13 +21,13 @@
 	</update>
 	
 	<delete id="deleteTime">
-		delete from videocheck where videocheckID=#{videocheckID}
+		delete from videocheck where id=#{id}
 	</delete>
 	
 	<select id="getTime" resultType="VideoCheckVO">
 		select * 
 		from videocheck 
-		where videocheckID=#{videocheckID}
+		where id=#{id}
 	</select>
 	
 	<select id="getTime2" resultType="VideoCheckVO">
@@ -39,7 +39,7 @@
 	<select id="getTimeList" resultType="VideoCheckVO">
 		SELECT * 
 		FROM videocheck order
-		by videocheckID desc
+		by id desc
 	</select>
 	
 </mapper>

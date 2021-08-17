@@ -76,7 +76,7 @@ public class ClassController{
 		System.out.println("id : " + ccvo.getId());
 		
 		model.addAttribute("classID", classInfo);
-		model.addAttribute("list", videoCheckService.getTime(103)); //studentID가 3으로 설정되어있음
+		model.addAttribute("list", videoCheckService.getTime(175)); //studentID가 3으로 설정되어있음
 		//model.addAttribute("playlist", JSONArray.fromObject(playlistService.getVideoList(pvo)));  //Video와 videocheck테이블을 join해서 두 테이블의 정보를 불러오기 위함
 		model.addAttribute("playlistCheck", JSONArray.fromObject(classContentsService.getSamePlaylistID(ccvo))); //선택한 PlaylistID에 맞는 row를 playlistCheck테이블에서 가져오기 위함 , playlistCheck가 아니라 classPlaylistCheck에서 가져와야하거 같은디
 		
@@ -182,7 +182,7 @@ public class ClassController{
 		vo.setStudentEmail(studentID);
 		vo.setvideoID(videoID);
 		vo.setTimer(timer);
-		vo.setvideocheckPlaylistID(playlistID);
+		vo.setPlaylistID(playlistID);
 		
 		if (videoCheckService.updateTime(vo) == 0) {
 			System.out.println("데이터 업데이트 실패 ");

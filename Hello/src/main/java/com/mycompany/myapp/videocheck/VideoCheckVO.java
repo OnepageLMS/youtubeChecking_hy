@@ -7,7 +7,7 @@ import java.sql.Date;
 public class VideoCheckVO {
 	private int id;
 	private int videoID;
-	private int videocheckPlaylistID;
+	private int playlistID;
 	private String studentEmail;
 	private double lastTime;
 	private double timer;
@@ -30,11 +30,11 @@ public class VideoCheckVO {
 		this.videoID = videoID;
 	}
 	
-	public int getvideocheckPlaylistID() {
-		return videocheckPlaylistID;
+	public int getPlaylistID() {
+		return playlistID;
 	}
-	public void setvideocheckPlaylistID(int videocheckPlaylistID) {
-		this.videocheckPlaylistID = videocheckPlaylistID;
+	public void setPlaylistID(int playlistID) {
+		this.playlistID = playlistID;
 	}
 	
 	public String getStudentEmail() {
